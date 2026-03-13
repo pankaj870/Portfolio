@@ -1,0 +1,28 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: node:18-alpine
+  script:
+    - cd Portfolio
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - Portfolio/dist/
+    expire_in: 1 hour
+  only:
+    - stage
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - mv Portfolio/dist public
+  artifacts:
+    paths:
+      - public/
+  only:
+    - stage
