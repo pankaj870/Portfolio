@@ -7,7 +7,7 @@ export function Projects() {
 
   const projects = [
     {
-      title: 'Visualble - AI-Based eBook Platform',
+      title: 'visualible - AI-Based eBook Platform',
       description:
         'A comprehensive eBook platform with AI-driven features, payment integration, and real-time content delivery.',
       technologies: ['Node.js', 'Express.js', 'Firebase', 'Razorpay', 'Stripe', 'Redis', 'MySQL', 'MongoDB', 'AWS'],
@@ -18,7 +18,7 @@ export function Projects() {
         'Optimized performance using Redis caching and managed data with MySQL/MongoDB',
         'Deployed services on AWS for high scalability and availability',
       ],
-      link: 'https://visualble.com',
+      link: 'https://visualible.com/',
       gradient: 'from-blue-500 to-cyan-500',
     },
     {
