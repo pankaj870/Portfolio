@@ -1,28 +1,37 @@
-stages:
-  - build
-  - deploy
+name: CI/CD
 
-build:
-  stage: build
-  image: node:18-alpine
-  script:
-    - cd Portfolio
-    - npm ci
-    - npm run build
-  artifacts:
-    paths:
-      - Portfolio/dist/
-    expire_in: 1 hour
-  only:
-    - stage
+on:
+  push:
+    branches:
+      - stage
 
-pages:
-  stage: deploy
-  image: alpine:latest
-  script:
-    - mv Portfolio/dist public
-  artifacts:
-    paths:
-      - public/
-  only:
-    - stage
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
