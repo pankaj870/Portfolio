@@ -14,6 +14,7 @@ build:
       - Portfolio/dist/
     expire_in: 1 hour
   only:
+    - main
     - stage
 
 pages:
@@ -25,4 +26,5 @@ pages:
     paths:
       - public/
   only:
+    - main
     - stage
