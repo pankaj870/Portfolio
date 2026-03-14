@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { ChevronDown, Github, Linkedin, Mail } from 'lucide-react';
+import { ChevronDown, Github, Linkedin, Mail, FileCode2 } from 'lucide-react';
+import { HeroTerminal } from './HeroTerminal';
 
 export function Hero() {
   return (
@@ -10,11 +11,11 @@ export function Hero() {
         <div className="absolute bottom-1/4 right-1/4 w-64 md:w-96 h-64 md:h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      <div className="max-w-7xl mx-auto py-20 relative z-10 w-full">
-        <div className="text-center">
+      <div className="max-w-7xl mx-auto py-20 relative z-10 w-full flex flex-col md:flex-row items-center justify-between gap-12">
+        <div className="text-left md:w-1/2">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
             <motion.p
@@ -51,9 +52,9 @@ export function Hero() {
               Passionate about creating secure, efficient backend systems that power modern applications.
             </motion.p>
 
-            {/* Social Links */}
+            {/* Social Links & Action Buttons */}
             <motion.div
-              className="flex gap-4 md:gap-6 justify-center mb-12"
+              className="flex flex-wrap gap-4 md:gap-6 justify-start mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
@@ -88,27 +89,40 @@ export function Hero() {
               </motion.a>
             </motion.div>
 
-            <motion.a
-              href="#contact"
-              className="inline-block px-6 md:px-8 py-3 md:py-4 text-sm md:text-base bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all"
+            <motion.div
+              className="flex gap-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              Get In Touch
-            </motion.a>
+              <a
+                href="#projects"
+                className="flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 text-sm md:text-base font-bold text-black bg-[#00E5FF] rounded-lg hover:shadow-lg hover:shadow-[#00E5FF]/50 transition-all hover:scale-105 active:scale-95"
+              >
+                <FileCode2 className="w-5 h-5" /> View Projects
+              </a>
+              <a
+                href="#contact"
+                className="px-6 md:px-8 py-3 md:py-4 text-sm md:text-base font-bold bg-transparent border border-[#7B61FF] text-[#7B61FF] rounded-lg hover:bg-[#7B61FF]/10 transition-all hover:scale-105 active:scale-95"
+              >
+                Contact Me
+              </a>
+            </motion.div>
           </motion.div>
+        </div>
 
-          <motion.div
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+        {/* Terminal Simulation */}
+        <div className="w-full md:w-1/2 flex justify-center md:justify-end">
+          <HeroTerminal />
+        </div>
+
+        <motion.div
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
           >
             <ChevronDown className="w-6 h-6 md:w-8 md:h-8 text-gray-500" />
           </motion.div>
-        </div>
       </div>
     </section>
   );

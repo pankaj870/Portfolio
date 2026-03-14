@@ -1,6 +1,12 @@
 import { motion } from 'motion/react';
 import { useInView } from './useInView';
-import { Code2, Database, Cloud, GitBranch, Layout, Brain, Wrench, Code } from 'lucide-react';
+import { Code2, Database, Cloud, GitBranch, Layout, Server } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 
 export function Skills() {
   const [ref, isInView] = useInView({ threshold: 0.2 });
@@ -9,106 +15,130 @@ export function Skills() {
     {
       title: 'Languages',
       icon: Code2,
-      skills: ['JavaScript', 'Java', 'Python', 'HTML5', 'CSS3'],
+      skills: [
+        { name: 'JavaScript', description: 'V8 Engine, ES6+, Async programming' },
+        { name: 'Java', description: 'Object-Oriented Programming, Spring frameworks' },
+        { name: 'Python', description: 'Data Science, Machine Learning, Scripts' }
+      ],
       color: 'from-blue-400 to-blue-600',
+      shadowColor: '#3b82f6',
     },
     {
       title: 'Backend',
-      icon: Database,
-      skills: ['Node.js', 'Express.js', 'RESTful APIs', 'Microservices'],
+      icon: Server,
+      skills: [
+        { name: 'Node.js', description: 'V8 Runtime, Event-driven architecture' },
+        { name: 'Express.js', description: 'Web Framework, RESTful APIs, Middleware' }
+      ],
       color: 'from-green-400 to-green-600',
-    },
-    {
-      title: 'Frontend',
-      icon: Layout,
-      skills: ['React.js', 'Tailwind CSS', 'Responsive Design', 'UI/UX'],
-      color: 'from-cyan-400 to-cyan-600',
+      shadowColor: '#22c55e',
     },
     {
       title: 'Databases',
       icon: Database,
-      skills: ['MySQL', 'MongoDB', 'Redis', 'Database Design'],
+      skills: [
+        { name: 'MySQL', description: 'Relational databases, Complex queries, ACID' },
+        { name: 'MongoDB', description: 'NoSQL, Document-oriented, Scalability' }
+      ],
       color: 'from-purple-400 to-purple-600',
+      shadowColor: '#a855f7',
     },
     {
-      title: 'AI & Data Science',
-      icon: Brain,
-      skills: ['Machine Learning', 'Data Analysis', 'Data Visualization', 'Python ML'],
-      color: 'from-pink-400 to-pink-600',
-    },
-    {
-      title: 'Cloud & BaaS',
+      title: 'Cloud',
       icon: Cloud,
-      skills: ['AWS', 'Firebase', 'Cloud Deployment', 'Scalability'],
+      skills: [
+        { name: 'AWS', description: 'EC2, S3, RDS, Cloud deployment' },
+        { name: 'Firebase', description: 'Authentication, Realtime Database, Firestore' }
+      ],
       color: 'from-orange-400 to-orange-600',
+      shadowColor: '#f97316',
     },
     {
-      title: 'Version Control',
+      title: 'Tools',
       icon: GitBranch,
-      skills: ['Git', 'GitHub', 'Collaboration', 'CI/CD'],
+      skills: [
+        { name: 'Git', description: 'Version Control, Branching, Merging' },
+        { name: 'GitHub', description: 'Collaboration, CI/CD, Code Reviews' }
+      ],
       color: 'from-rose-400 to-rose-600',
+      shadowColor: '#f43f5e',
     },
     {
-      title: 'Tools & Others',
-      icon: Wrench,
-      skills: ['Razorpay', 'Stripe', 'Postman', 'VS Code'],
-      color: 'from-yellow-400 to-yellow-600',
-    },
-    {
-      title: 'Web Development',
-      icon: Code,
-      skills: ['Full Stack', 'Web Security', 'Performance Optimization', 'API Integration'],
-      color: 'from-indigo-400 to-indigo-600',
+      title: 'Frontend',
+      icon: Layout,
+      skills: [
+        { name: 'React.js', description: 'Component-based UI, Hooks, State management' }
+      ],
+      color: 'from-cyan-400 to-cyan-600',
+      shadowColor: '#06b6d4',
     },
   ];
 
   return (
-    <section id="skills" className="py-12 md:py-20 px-4 md:px-6 bg-[#0f0f0f]/50" ref={ref}>
-      <div className="max-w-6xl mx-auto">
+    <section id="skills" className="py-12 md:py-20 px-4 md:px-6 relative" ref={ref}>
+      <div className="max-w-6xl mx-auto z-10 relative">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+           initial={{ opacity: 0, y: 50 }}
+           animate={isInView ? { opacity: 1, y: 0 } : {}}
+           transition={{ duration: 0.8 }}
+           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12 flex items-center gap-2 md:gap-4">
-            <span className="text-blue-400 text-2xl md:text-3xl">02.</span>
-            <span>Technical Skills</span>
-            <span className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent ml-2 md:ml-4" />
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
+            <span className="text-[#00E5FF]">Technical</span> Arsenal
           </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+            Tools and technologies I use to build robust and scalable systems.
+          </p>
+        </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <TooltipProvider delayDuration={100}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {skillCategories.map((category, index) => (
               <motion.div
                 key={category.title}
-                initial={{ opacity: 0, y: 50 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="relative group"
               >
-                <div className={`absolute -inset-0.5 bg-gradient-to-r ${category.color} rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-300`} />
-                <div className="relative bg-[#0a0a0a] p-4 md:p-6 rounded-lg border border-white/10 hover:border-white/20 transition-all h-full">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${category.color}`}>
-                      <category.icon className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                <div 
+                  className={`absolute -inset-0.5 bg-gradient-to-r ${category.color} rounded-lg blur opacity-10 group-hover:opacity-30 transition duration-500`} 
+                />
+                <div className="relative bg-[#0a0a0a] border border-[#333] hover:border-gray-500 p-6 rounded-lg transition-all h-full z-10 overflow-hidden flex flex-col justify-start">
+                  
+                  {/* Cyberpunk accent corner */}
+                  <div className={`absolute top-0 right-0 w-8 h-8 opacity-20 border-t-2 border-r-2 rounded-tr-lg group-hover:opacity-100 transition-all`} style={{ borderColor: category.shadowColor }} />
+                  
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 border border-gray-700 bg-[#111] rounded-md shadow-lg" style={{ boxShadow: `0 0 10px ${category.shadowColor}40` }}>
+                      <category.icon className="w-5 h-5 text-gray-200" style={{ color: category.shadowColor }} />
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold">{category.title}</h3>
+                    <h3 className="text-xl font-bold font-mono tracking-wider text-gray-100 uppercase">{category.title}</h3>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  
+                  <div className="flex flex-wrap gap-3 mt-auto">
                     {category.skills.map((skill) => (
-                      <motion.span
-                        key={skill}
-                        className="px-2.5 md:px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs md:text-sm text-gray-300 hover:bg-white/10 hover:border-white/20 transition-all"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {skill}
-                      </motion.span>
+                      <Tooltip key={skill.name}>
+                        <TooltipTrigger asChild>
+                          <motion.div
+                            className="px-3 py-1.5 bg-[#111] border border-[#222] text-sm text-gray-300 font-mono tracking-wide rounded-md cursor-pointer hover:bg-[#222] hover:text-[#00E5FF] hover:border-[#00E5FF]/50 transition-colors"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {skill.name}
+                          </motion.div>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#050505] border-[#333] text-gray-200 font-mono text-xs shadow-xl shadow-[#00E5FF]/20 z-50">
+                          <p>{skill.description}</p>
+                        </TooltipContent>
+                      </Tooltip>
                     ))}
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </TooltipProvider>
       </div>
     </section>
   );

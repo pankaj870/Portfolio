@@ -71,7 +71,7 @@ export function AnimatedBackground() {
         if (!ctx) return;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
+        ctx.fillStyle = `rgba(0, 229, 255, ${this.opacity})`;
         ctx.fill();
       }
     }
@@ -121,7 +121,7 @@ export function AnimatedBackground() {
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(96, 165, 250, ${0.1 * (1 - distance / 100)})`;
+            ctx.strokeStyle = `rgba(123, 97, 255, ${0.1 * (1 - distance / 100)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
