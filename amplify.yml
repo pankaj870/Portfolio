@@ -1,20 +1,20 @@
 version: 1
 
 frontend:
-  phases:
-    preBuild:
-      commands:
-        - cd Portfolio && npm ci
+phases:
+preBuild:
+commands:
+- npm ci
 
-    build:
-      commands:
-        - cd Portfolio && npm run build
+build:
+  commands:
+    - npm run build
 
-  artifacts:
-    baseDirectory: Portfolio/dist
-    files:
-      - '**/*'
+artifacts:
+baseDirectory: dist
+files:
+- '**/*'
 
-  cache:
-    paths:
-      - Portfolio/node_modules/**/*
+cache:
+paths:
+- node_modules/**/*
