@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - stage
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -28,6 +29,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          DEPLOY_TARGET: github-pages
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
