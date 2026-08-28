@@ -12,7 +12,7 @@ export function Projects() {
       title: 'AI-Based eBook Platform',
       status: 'active',
       description: 'REST APIs for AI-driven eBook delivery, integrating global payment gateways and high-speed caching.',
-      technologies: ['Node.js', 'Express', 'Firebase Auth', 'Razorpay/Stripe', 'Redis', 'AWS'],
+      technologies: ['Node.js', 'Express', 'Firebase Auth', 'Amazon pay/Stripe', 'Redis', 'AWS'],
       link: 'visualible.com',
       github: '#',
       diagram: [
@@ -28,7 +28,7 @@ export function Projects() {
       status: 'syntra.co.in',
       description: 'Distributed microservices backend for real-time matchmaking, secure auth, and geospatial queries.',
       technologies: ['Node.js', 'REST APIs', 'Firebase', 'MongoDB', 'Microservices', 'AWS Hosting'],
-      link: '#',
+      link: 'syntra.co.in',
       github: '#',
       diagram: [
         { icon: Smartphone, label: 'Mobile App' },
