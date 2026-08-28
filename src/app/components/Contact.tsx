@@ -69,12 +69,12 @@ export function Contact() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full lg:w-1/3 flex flex-col gap-6"
           >
-            <a href="mailto:mahajianmag05@gmail.com" className="group p-6 bg-[#0a0a0a] border border-[#222] hover:border-[#00E5FF] rounded-xl transition-all hover:-translate-y-1">
+            <a href="mailto:mahajanpankaj615@gmail.com" className="group p-6 bg-[#0a0a0a] border border-[#222] hover:border-[#00E5FF] rounded-xl transition-all hover:-translate-y-1">
               <div className="w-12 h-12 rounded bg-[#00E5FF]/10 flex items-center justify-center mb-4 group-hover:bg-[#00E5FF] transition-colors">
                 <Mail className="text-[#00E5FF] group-hover:text-black" />
               </div>
               <div className="text-gray-500 font-mono text-sm uppercase mb-1">Email_Address</div>
-              <div className="text-white font-mono text-sm truncate">mahajianmag05@gmail.com</div>
+              <div className="text-white font-mono text-sm truncate">mahajanpankaj615@gmail.com</div>
             </a>
 
             <a href="https://www.linkedin.com/in/pankaj-mahajan-26a369223" target="_blank" rel="noopener" className="group p-6 bg-[#0a0a0a] border border-[#222] hover:border-[#3b82f6] rounded-xl transition-all hover:-translate-y-1">

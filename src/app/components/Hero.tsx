@@ -80,7 +80,7 @@ export function Hero() {
                 <Github className="w-5 h-5 md:w-6 md:h-6 text-purple-400" />
               </motion.a>
               <motion.a
-                href="mailto:mahajianmag05@gmail.com"
+                href="mailto:mahajanpankaj615@gmail.com"
                 className="p-2.5 md:p-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 hover:border-pink-400/50 transition-all"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}

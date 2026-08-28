@@ -13,7 +13,7 @@ export function Projects() {
       status: 'active',
       description: 'REST APIs for AI-driven eBook delivery, integrating global payment gateways and high-speed caching.',
       technologies: ['Node.js', 'Express', 'Firebase Auth', 'Razorpay/Stripe', 'Redis', 'AWS'],
-      link: '#',
+      link: 'visualible.com',
       github: '#',
       diagram: [
         { icon: Smartphone, label: 'Client' },
@@ -25,7 +25,7 @@ export function Projects() {
     {
       id: "srv-02",
       title: 'Syntra – Dating Application',
-      status: 'running',
+      status: 'syntra.co.in',
       description: 'Distributed microservices backend for real-time matchmaking, secure auth, and geospatial queries.',
       technologies: ['Node.js', 'REST APIs', 'Firebase', 'MongoDB', 'Microservices', 'AWS Hosting'],
       link: '#',
@@ -132,12 +132,12 @@ export function Projects() {
                     >
                       <ExternalLink className="w-4 h-4" /> Live Demo
                     </a>
-                    <a
+                    {/* <a
                       href={project.github}
                       className="flex items-center gap-2 px-4 py-2 bg-transparent text-gray-300 hover:text-white transition-all rounded"
-                    >
-                      <Github className="w-4 h-4" /> Source
-                    </a>
+                    > */}
+                      {/* <Github className="w-4 h-4" /> Source */}
+                    {/* </a> */}
                   </div>
                 </div>
               </div>

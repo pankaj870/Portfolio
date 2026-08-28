@@ -224,93 +224,93 @@ function GitHubContributions({ username }: { username: string }) {
 export function DeveloperStats() {
   const [ref, isInView] = useInView<HTMLElement>({ threshold: 0.1 });
 
-  return (
-    <section id="stats" className="py-24 px-4 md:px-6 relative z-10" ref={ref}>
-      {/* Background glow decoration */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full opacity-[0.03] blur-[120px]"
-          style={{ background: '#00E5FF' }}
-        />
-        <div
-          className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full opacity-[0.03] blur-[120px]"
-          style={{ background: '#7B61FF' }}
-        />
-      </div>
+  return (<></>
+    // <section id="stats" className="py-24 px-4 md:px-6 relative z-10" ref={ref}>
+    //   {/* Background glow decoration */}
+    //   <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    //     <div
+    //       className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full opacity-[0.03] blur-[120px]"
+    //       style={{ background: '#00E5FF' }}
+    //     />
+    //     <div
+    //       className="absolute bottom-1/3 right-1/4 w-96 h-96 rounded-full opacity-[0.03] blur-[120px]"
+    //       style={{ background: '#7B61FF' }}
+    //     />
+    //   </div>
 
-      <div className="max-w-6xl mx-auto relative">
+    //   <div className="max-w-6xl mx-auto relative">
 
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="mb-16"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-[1px] bg-[#00E5FF]/50" />
-            <span className="text-[#00E5FF] font-mono text-xs tracking-[0.3em] uppercase">Performance</span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-black font-mono text-white tracking-tight uppercase mb-4">
-            System<span className="text-[#00E5FF]" style={{ textShadow: '0 0 40px rgba(0,229,255,0.5)' }}>_Metrics</span>
-          </h2>
-          <p className="text-gray-500 max-w-2xl font-mono text-sm leading-relaxed">
-            <span className="text-[#00E5FF]/50">// </span>
-            Real-time developer activity, commit history and performance benchmarks.
-          </p>
-        </motion.div>
+    //     {/* Section Header */}
+    //     <motion.div
+    //       initial={{ opacity: 0, y: 40 }}
+    //       animate={isInView ? { opacity: 1, y: 0 } : {}}
+    //       transition={{ duration: 0.8 }}
+    //       className="mb-16"
+    //     >
+    //       <div className="flex items-center gap-3 mb-4">
+    //         <div className="w-8 h-[1px] bg-[#00E5FF]/50" />
+    //         <span className="text-[#00E5FF] font-mono text-xs tracking-[0.3em] uppercase">Performance</span>
+    //       </div>
+    //       <h2 className="text-4xl md:text-6xl font-black font-mono text-white tracking-tight uppercase mb-4">
+    //         System<span className="text-[#00E5FF]" style={{ textShadow: '0 0 40px rgba(0,229,255,0.5)' }}>_Metrics</span>
+    //       </h2>
+    //       <p className="text-gray-500 max-w-2xl font-mono text-sm leading-relaxed">
+    //         <span className="text-[#00E5FF]/50">// </span>
+    //         Real-time developer activity, commit history and performance benchmarks.
+    //       </p>
+    //     </motion.div>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          <StatCard value={45}  label="APIs Built"         icon={Server}    color="#00E5FF" delay={0.0} />
-          <StatCard value={12}  label="Backend Projects"   icon={Code}      color="#7B61FF" delay={0.1} />
-          <StatCard value={5}   label="Databases Used"     icon={Database}  color="#22c55e" delay={0.2} />
-          <StatCard value={20}  label="Cloud Deployments"  icon={Cloud}     color="#f59e0b" delay={0.3} />
-        </div>
+    //     {/* Stat Cards */}
+    //     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+    //       <StatCard value={45}  label="APIs Built"         icon={Server}    color="#00E5FF" delay={0.0} />
+    //       <StatCard value={12}  label="Backend Projects"   icon={Code}      color="#7B61FF" delay={0.1} />
+    //       <StatCard value={5}   label="Databases Used"     icon={Database}  color="#22c55e" delay={0.2} />
+    //       <StatCard value={20}  label="Cloud Deployments"  icon={Cloud}     color="#f59e0b" delay={0.3} />
+    //     </div>
 
-        {/* GitHub Contribution Panel */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="relative rounded-2xl overflow-hidden"
-          style={{
-            background: 'linear-gradient(180deg, #080808 0%, #050505 100%)',
-            border: '1px solid #1a1a1a',
-          }}
-        >
-          {/* Panel glow border top */}
-          <div
-            className="absolute top-0 left-0 w-full h-[1px]"
-            style={{ background: 'linear-gradient(90deg, transparent 0%, #00E5FF40 50%, transparent 100%)' }}
-          />
+    //     {/* GitHub Contribution Panel */}
+    //     <motion.div
+    //       initial={{ opacity: 0, y: 30 }}
+    //       animate={isInView ? { opacity: 1, y: 0 } : {}}
+    //       transition={{ duration: 0.8, delay: 0.35 }}
+    //       className="relative rounded-2xl overflow-hidden"
+    //       style={{
+    //         background: 'linear-gradient(180deg, #080808 0%, #050505 100%)',
+    //         border: '1px solid #1a1a1a',
+    //       }}
+    //     >
+    //       {/* Panel glow border top */}
+    //       {/* <div
+    //         className="absolute top-0 left-0 w-full h-[1px]"
+    //         style={{ background: 'linear-gradient(90deg, transparent 0%, #00E5FF40 50%, transparent 100%)' }}
+    //       /> */}
 
-          {/* Panel header */}
-          <div className="flex items-center justify-between px-6 md:px-8 pt-6 pb-5 border-b border-[#1a1a1a]">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF]" />
-              <h3 className="text-base font-bold text-white font-mono tracking-widest">
-                <span className="text-[#00E5FF]">~/github</span> · contribution_log
-              </h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <GitBranch className="w-4 h-4 text-gray-600" />
-              <span className="text-gray-600 font-mono text-xs">pankaj870</span>
-            </div>
-          </div>
+    //       {/* Panel header
+    //       <div className="flex items-center justify-between px-6 md:px-8 pt-6 pb-5 border-b border-[#1a1a1a]">
+    //         <div className="flex items-center gap-3">
+    //           <div className="w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00E5FF]" />
+    //           <h3 className="text-base font-bold text-white font-mono tracking-widest">
+    //             <span className="text-[#00E5FF]">~/github</span> · contribution_log
+    //           </h3>
+    //         </div>
+    //         <div className="flex items-center gap-2">
+    //           <GitBranch className="w-4 h-4 text-gray-600" />
+    //           <span className="text-gray-600 font-mono text-xs">pankaj870</span>
+    //         </div>
+    //       </div> */}
 
-          {/* Contribution graph */}
-          <div className="px-6 md:px-8 py-6">
-            <GitHubContributions username="pankaj870" />
-          </div>
+    //       {/* Contribution graph */}
+    //       {/* <div className="px-6 md:px-8 py-6">
+    //         <GitHubContributions username="pankaj870" />
+    //       </div> */}
 
-          {/* Panel footer */}
-          <div className="px-6 md:px-8 py-4 border-t border-[#1a1a1a] flex items-center gap-2">
-            <Zap className="w-3 h-3 text-[#00E5FF]/40" />
-            <span className="text-gray-700 font-mono text-[10px] tracking-widest">LIVE · AUTO-REFRESHED FROM GITHUB API</span>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+    //       {/* Panel footer */}
+    //       <div className="px-6 md:px-8 py-4 border-t border-[#1a1a1a] flex items-center gap-2">
+    //         <Zap className="w-3 h-3 text-[#00E5FF]/40" />
+    //         <span className="text-gray-700 font-mono text-[10px] tracking-widest">LIVE · AUTO-REFRESHED FROM GITHUB API</span>
+    //       </div>
+    //     </motion.div>
+    //   </div>
+    // </section>
   );
 }
