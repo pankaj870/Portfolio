@@ -8,13 +8,19 @@ import { Projects } from './components/Projects';
 import { Education } from './components/Education';
 import { Contact } from './components/Contact';
 import { Navigation } from './components/Navigation';
-import { GravityController } from './components/GravityController';
 import { EasterEggs } from './components/EasterEggs';
+import { StarsBackground } from '@/components/animate-ui/components/backgrounds/stars';
 
 export default function App() {
   return (
-    <div className="bg-[#060612] min-h-screen text-white relative overflow-x-hidden">
-      <GravityController />
+    <div className="bg-black min-h-screen text-white relative overflow-x-hidden">
+      <StarsBackground
+        starColor="#FFFFFF"
+        speed={70}
+        factor={0.035}
+        pointerEvents={false}
+        className="fixed inset-0 z-0"
+      />
       <div className="relative z-10">
         <Navigation />
         <Hero />

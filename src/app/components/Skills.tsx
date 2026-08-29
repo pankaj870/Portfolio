@@ -1,12 +1,76 @@
 import { motion } from 'motion/react';
 import { useInView } from './useInView';
 import { Code2, Database, Cloud, GitBranch, Layout, Server } from 'lucide-react';
+import { RadialIntro } from '@/components/animate-ui/components/community/radial-intro';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
+
+const skillOrbitItems = [
+  {
+    id: 1,
+    name: 'JavaScript',
+    src: 'https://cdn.simpleicons.org/javascript/F7DF1E',
+  },
+  {
+    id: 2,
+    name: 'React',
+    src: 'https://cdn.simpleicons.org/react/61DAFB',
+  },
+  {
+    id: 3,
+    name: 'Node.js',
+    src: 'https://cdn.simpleicons.org/nodedotjs/5FA04E',
+  },
+  {
+    id: 4,
+    name: 'Express',
+    src: 'https://cdn.simpleicons.org/express/FFFFFF',
+  },
+  {
+    id: 5,
+    name: 'Python',
+    src: 'https://cdn.simpleicons.org/python/3776AB',
+  },
+  {
+    id: 6,
+    name: 'Java',
+    src: 'https://cdn.simpleicons.org/openjdk/ED8B00',
+  },
+  {
+    id: 7,
+    name: 'MySQL',
+    src: 'https://cdn.simpleicons.org/mysql/4479A1',
+  },
+  {
+    id: 8,
+    name: 'MongoDB',
+    src: 'https://cdn.simpleicons.org/mongodb/47A248',
+  },
+  {
+    id: 9,
+    name: 'AWS',
+    src: 'https://cdn.simpleicons.org/amazonwebservices/FF9900',
+  },
+  {
+    id: 10,
+    name: 'Firebase',
+    src: 'https://cdn.simpleicons.org/firebase/FFCA28',
+  },
+  {
+    id: 11,
+    name: 'Git',
+    src: 'https://cdn.simpleicons.org/git/F05032',
+  },
+  {
+    id: 12,
+    name: 'GitHub',
+    src: 'https://cdn.simpleicons.org/github/FFFFFF',
+  },
+];
 
 export function Skills() {
   const [ref, isInView] = useInView({ threshold: 0.2 });
@@ -92,6 +156,10 @@ export function Skills() {
         </motion.div>
 
         <TooltipProvider delayDuration={100}>
+          <div className="mb-16 flex justify-center">
+            <RadialIntro orbitItems={skillOrbitItems} stageSize={420} imageSize={62} />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {skillCategories.map((category, index) => (
               <motion.div
