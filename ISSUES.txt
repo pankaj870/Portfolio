@@ -1,0 +1,51 @@
+PORTFOLIO DEPLOYMENT ISSUES & FIXES
+===================================
+
+ISSUE 1: Empty page on deployment (FIXED)
+-----------------------------------------
+Date Fixed: 2026-09-02
+Status: RESOLVED
+
+Problem:
+- Page showing empty after deployment
+- Root cause: Vite build output directory mismatch
+
+Details:
+- vite.config.ts was configured to build to dist/public/ instead of dist/
+- This caused a mismatch with Dockerfile and Amplify.yml expectations
+- Deployed files were in dist/public/assets/ but servers looked for dist/assets/
+- Result: Missing index.html at deployment root, leading to empty page
+
+Solution Applied:
+1. Updated vite.config.ts:
+   - Changed outDir from "dist/public" to "dist"
+   
+2. Updated .github/workflows/main.yml:
+   - Changed upload path from "./dist/public" to "./dist"
+   
+3. Rebuilt with correct GitHub Pages base path:
+   - Added BASE_PATH=/Portfolio/ for correct asset references
+   - Assets now point to /Portfolio/assets/ instead of /assets/
+
+Files Modified:
+- vite.config.ts (line 49-51)
+- .github/workflows/main.yml (line 42-43)
+- dist/ (rebuilt with correct paths)
+
+---
+
+OPEN ISSUES
+-----------
+(None currently)
+
+---
+
+NOTES FOR FUTURE DEPLOYMENT
+----------------------------
+- When deploying to GitHub Pages at /Portfolio/ subdirectory:
+  - Always build with: npm run build -- --base=/Portfolio/
+  - This ensures all asset paths include the subdirectory prefix
+  
+- When deploying to root domain:
+  - Build with default: npm run build
+  - This uses BASE_PATH=/ from vite.config.ts
