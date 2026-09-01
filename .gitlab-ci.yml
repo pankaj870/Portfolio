@@ -8,9 +8,11 @@ build:
   script:
     - npm ci
     - npm run build
+  variables:
+    BASE_PATH: "/Portfolio/"
   artifacts:
     paths:
-      - dist/
+      - dist/public/
     expire_in: 1 hour
   only:
     - main
@@ -20,7 +22,7 @@ pages:
   stage: deploy
   image: alpine:latest
   script:
-    - mv dist public
+    - mv dist/public public
   artifacts:
     paths:
       - public/
