@@ -1,456 +1,870 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Download,
+  ExternalLink,
+  Linkedin,
+  Mail,
+  Menu,
+  X,
+} from "lucide-react";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/not-found";
+import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
+import GhostCursor from "@/components/GhostCursor";
 
-// --- Common Components ---
+const queryClient = new QueryClient();
 
-const Header = () => {
-    const location = useLocation();
-    const navItems = [
-        { name: 'Home', path: '/' },
-        { name: 'Experience', path: '/experience' },
-        { name: 'Projects', path: '/projects' },
-        { name: 'Contact', path: '/contact' }
-    ];
+const navItems = [
+  { label: "Approach", href: "#approach", id: "approach" },
+  { label: "Selected work", href: "#work", id: "work" },
+  { label: "Experience", href: "#experience", id: "experience" },
+  { label: "Contact", href: "#contact", id: "contact" },
+];
 
-    return (
-        <header className="fixed top-0 w-full z-50 bg-surface/40 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.1)] border-b border-outline-variant/10">
-            <div className="h-16 max-w-[1280px] mx-auto px-margin-mobile lg:px-margin-desktop flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <img alt="Pankaj Mahajan Logo" className="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8gJPsHrCOdSLQP8AjMlthhdqax39P05XdFIrALTf0ckdSaQqFZuz3EI7Hcsab_kX7z7RhjxRAELVGsuZppdHjGFTEI2ZwuHfPrXsmCq9hhcYeONAr5mYxNZj9-iPpvcB0dd8gnqpW8nc2106KfJZyUV0dt-hOmdhM_vZxiwltNPn3GVeGpIXVPpVvkJtHOj_kEKG_ATNKMMApKYDlNvHzYpxGRyuN3QTTisSm7ng-vqdYBaZy85SY"/>
-                    <span className="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:block">Pankaj Mahajan</span>
-                </div>
-                <nav className="hidden md:flex items-center gap-stack-lg">
-                    {navItems.map(item => (
-                        <Link 
-                            key={item.name}
-                            to={item.path} 
-                            className={`font-label-caps text-label-caps uppercase transition-colors ${location.pathname === item.path ? 'text-secondary font-bold' : 'text-on-surface-variant hover:text-secondary'}`}
-                        >
-                            {item.name}
-                        </Link>
-                    ))}
-                </nav>
-                <div className="flex items-center gap-stack-md">
-                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                        <span className="material-symbols-outlined text-on-primary text-[18px]">person</span>
-                    </div>
-                </div>
-            </div>
-        </header>
+const skills = [
+  "JavaScript (ES6+)",
+  "Data Structures & Algorithms",
+  "Node.js",
+  "Express.js",
+  "Next.js",
+  "React.js",
+  "MERN Stack",
+  "TypeScript",
+  "RESTful APIs",
+  "Microservices",
+  "RAG",
+  "MongoDB",
+  "MySQL",
+  "Redis",
+  "AWS",
+  "Docker",
+  "Firebase",
+  "n8n",
+  "Antigravity",
+  "Cursor",
+  "VS Code",
+  "Postman",
+  "Strapi CMS",
+  "Python",
+  "Java",
+  "Git / GitHub",
+];
+
+function useReveal() {
+  useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(".reveal"));
+    if (!("IntersectionObserver" in window)) {
+      nodes.forEach((node) => node.classList.add("is-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -10% 0px" },
     );
-};
+    nodes.forEach((node) => observer.observe(node));
+    requestAnimationFrame(() => {
+      nodes.forEach((node) => {
+        const rect = node.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.92)
+          node.classList.add("is-visible");
+      });
+    });
+    return () => observer.disconnect();
+  }, []);
+}
 
-const Footer = () => (
-    <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/10 py-stack-lg">
-        <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-stack-md">
-            <div className="flex flex-col gap-base text-center md:text-left">
-                <span className="font-label-caps text-label-caps text-on-surface uppercase opacity-50">© 2024 Pankaj Mahajan</span>
-                <span className="font-code-sm text-code-sm text-primary">Full Stack Developer // Architect</span>
-            </div>
-            <div className="flex items-center gap-stack-lg">
-                <a className="text-on-surface-variant hover:text-secondary transition-colors flex items-center gap-base" href="https://linkedin.com/in/pankaj-mahajan" target="_blank" rel="noreferrer"><span className="material-symbols-outlined text-[18px]">link</span><span className="font-label-caps text-label-caps uppercase">LinkedIn</span></a>
-                <a className="text-on-surface-variant hover:text-secondary transition-colors flex items-center gap-base" href="#"><span className="material-symbols-outlined text-[18px]">code</span><span className="font-label-caps text-label-caps uppercase">GitHub</span></a>
-                <a className="text-on-surface-variant hover:text-secondary transition-colors flex items-center gap-base" href="mailto:mahajanpankaj615@gmail.com"><span className="material-symbols-outlined text-[18px]">mail</span><span className="font-label-caps text-label-caps uppercase">Contact</span></a>
-            </div>
-        </div>
-    </footer>
-);
-
-// --- Screens ---
-
-const HomePage = () => {
-    return (
-        <div className="flex flex-col w-full relative">
-            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden mix-blend-screen opacity-20">
-                <svg className="absolute w-[200%] h-[200%] -top-1/2 -left-1/2 animate-[spin_120s_linear_infinite]" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                        <radialGradient cx="50%" cy="50%" id="grad1" r="50%">
-                            <stop offset="0%" stopColor="#bec6e0" stopOpacity="0.2"></stop>
-                            <stop offset="100%" stopColor="transparent" stopOpacity="0"></stop>
-                        </radialGradient>
-                    </defs>
-                    <circle cx="30" cy="30" fill="url(#grad1)" r="40"></circle>
-                    <circle cx="70" cy="70" fill="url(#grad1)" r="50"></circle>
-                </svg>
-            </div>
-            <section className="w-full min-h-[819px] flex flex-col justify-center relative z-10 px-margin-mobile lg:px-margin-desktop py-stack-lg max-w-container-max mx-auto mt-16">
-                <div className="flex flex-col lg:flex-row items-center gap-gutter w-full">
-                    <div className="flex flex-col w-full lg:w-[60%] gap-stack-md z-10">
-                        <div className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps px-4 py-2 rounded-full self-start shadow-sm mix-blend-luminosity">
-                            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-                            Available for new opportunities
-                        </div>
-                        <h1 className="font-display-lg-mobile text-display-lg-mobile lg:font-display-lg lg:text-display-lg text-on-surface tracking-tighter leading-tight relative group cursor-default">
-                            <span className="block text-primary">Architecting</span>
-                            <span className="block mix-blend-difference z-10 relative">Scalable Systems,</span>
-                            <span className="block relative group-hover:text-tertiary transition-colors duration-500">Delivering Seamless Experiences.</span>
-                        </h1>
-                        <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-4 opacity-90">
-                            Full Stack Developer with 1+ years of experience building secure, high-concurrency backend architectures and responsive frontend UIs. Owning features end-to-end, from schema design to production deployment.
-                        </p>
-                        <div className="flex flex-wrap items-center gap-4 mt-stack-md">
-                            <Link to="/projects" className="group relative inline-flex items-center justify-center bg-secondary text-on-secondary font-label-caps text-label-caps uppercase px-6 py-3 rounded-lg overflow-hidden transition-transform hover:scale-105 shadow-md">
-                                <span className="relative z-10 flex items-center gap-2">
-                                    View Projects
-                                    <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                </span>
-                                <div className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
-                            </Link>
-                            <button className="inline-flex items-center gap-2 bg-transparent text-secondary font-label-caps text-label-caps uppercase px-6 py-3 rounded-lg hover:bg-secondary/10 transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">download</span>
-                                Download Resume
-                            </button>
-                        </div>
-                    </div>
-                    <div className="w-full lg:w-[40%] justify-end relative z-10 hidden md:flex">
-                        <div className="w-full max-w-md bg-surface-container-highest rounded-xl shadow-xl overflow-hidden backdrop-blur-md bg-opacity-80 relative group">
-                            <div className="flex items-center gap-2 p-3 bg-surface-container/50 border-b border-white/5">
-                                <div className="w-3 h-3 rounded-full bg-error/70"></div>
-                                <div className="w-3 h-3 rounded-full bg-[#f59e0b]/70"></div>
-                                <div className="w-3 h-3 rounded-full bg-tertiary/70"></div>
-                                <span className="ml-2 font-code-sm text-code-sm text-on-surface-variant/50 text-[10px]">~/server/deploy.sh</span>
-                            </div>
-                            <div className="p-6 font-code-sm text-code-sm text-on-surface flex flex-col gap-2 min-h-[250px] relative">
-                                <div className="flex items-start gap-2 animate-fadeIn" style={{animationDelay: '0.5s'}}>
-                                    <span className="text-tertiary">➜</span><span className="text-secondary">~</span><span>npm run build</span>
-                                </div>
-                                <div className="text-on-surface-variant animate-fadeIn" style={{animationDelay: '1s'}}>
-                                    {">"} portfolio@1.0.0 build<br/>{">"} next build
-                                </div>
-                                <div className="text-on-surface animate-fadeIn" style={{animationDelay: '1.5s'}}>
-                                    <span className="text-secondary">info</span> - Creating an optimized production build...
-                                </div>
-                                <div className="text-on-surface animate-fadeIn" style={{animationDelay: '2s'}}>
-                                    <span className="text-tertiary">✓</span> Compiled successfully
-                                </div>
-                                <div className="mt-4 flex items-center gap-2 animate-fadeIn" style={{animationDelay: '2.5s'}}>
-                                    <span className="text-tertiary">➜</span>
-                                    <span className="w-2 h-4 bg-on-surface animate-pulse"></span>
-                                </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-surface-container-highest via-transparent to-transparent opacity-80 pointer-events-none"></div>
-                            </div>
-                        </div>
-                        <div className="absolute -bottom-8 -left-8 bg-surface-container text-on-surface p-4 rounded-lg shadow-lg flex items-center gap-3 animate-float">
-                            <span className="material-symbols-outlined text-tertiary">speed</span>
-                            <div>
-                                <p className="font-label-caps text-[10px] text-on-surface-variant uppercase">Uptime</p>
-                                <p className="font-code-sm font-bold text-on-surface">99.99%</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section className="w-full py-stack-lg bg-surface relative z-10">
-                <div className="max-w-container-max mx-auto px-margin-mobile lg:px-margin-desktop">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-                        <div className="lg:col-span-7 bg-surface-container p-8 rounded-2xl shadow-md flex flex-col justify-between group hover:bg-surface-container-high transition-colors duration-300">
-                            <div className="flex flex-col gap-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="material-symbols-outlined text-primary text-2xl">architecture</span>
-                                    <h2 className="font-headline-md text-headline-md text-on-surface">Full Stack Ownership</h2>
-                                </div>
-                                <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                                    I specialize in owning features from inception to deployment. This means architecting robust database schemas, building scalable APIs, and crafting intuitive user interfaces. My approach bridges the gap between complex backend logic and seamless frontend interactions, ensuring high performance across the entire stack.
-                                </p>
-                            </div>
-                            <div className="mt-8 flex flex-wrap gap-2">
-                                <span className="px-3 py-1 bg-surface-container-highest text-on-surface-variant font-code-sm text-code-sm rounded-md shadow-sm">System Design</span>
-                                <span className="px-3 py-1 bg-surface-container-highest text-on-surface-variant font-code-sm text-code-sm rounded-md shadow-sm">API Development</span>
-                                <span className="px-3 py-1 bg-surface-container-highest text-on-surface-variant font-code-sm text-code-sm rounded-md shadow-sm">UI/UX</span>
-                            </div>
-                        </div>
-                        <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-                            {[
-                                { icon: 'javascript', color: 'tertiary', label: 'Node.js' },
-                                { icon: 'code', color: 'secondary', label: 'React' },
-                                { icon: 'layers', color: 'primary', label: 'Next.js' },
-                                { icon: 'cloud', color: '[#f59e0b]', label: 'AWS' }
-                            ].map((item, idx) => (
-                                <div key={idx} className={`bg-surface-container-low p-6 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group`}>
-                                    <div className={`absolute inset-0 bg-gradient-to-br from-${item.color}/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-                                    <span className={`material-symbols-outlined text-4xl text-${item.color}`}>{item.icon}</span>
-                                    <span className="font-label-caps text-label-caps text-on-surface uppercase tracking-wider relative z-10">{item.label}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
-};
-
-const ProjectsPage = () => {
-    const projects = [
-        {
-            title: "Visualible — AI-Powered eBook Platform",
-            status: "Production",
-            problem: "Authoring and distributing interactive technical eBooks lacked a streamlined, AI-assisted workflow. Existing platforms struggled with large-scale document parsing and latency during content generation.",
-            solution: "Engineered a robust Next.js frontend communicating with a scalable Node.js backend. Implemented a sophisticated RAG (Retrieval-Augmented Generation) pipeline using Redis for aggressive caching, effectively cutting data retrieval latency by 35%. Optimized document processing workflows, reducing verification time by 40%.",
-            stack: ["Node.js", "Next.js", "Tailwind CSS", "RAG Pipeline", "Redis", "Stripe API"],
-            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCvpXCb_obQZdcw5S5DjMlUJGHjI_b9M-5k7xJwJwsLGH9Di9hEfInfVJtAatXTYPxOB_B1ZWAlpwI7zzrYkCJ93MRuOdASqlsCaMvXFFwGoYgIQmnLuqsPf8WIFvBDwvik97cYB8P6PhQyua6mtXglKJ9HBKHYqeX5VA2Rh0khRo-_7yJr2w5_acmH5Xufjzng6orltBA13j_xk6gcAn3J9Z66-MU2zMEEDVlTYObx2RyIR50ise-R",
-            stats: [ { val: "-35%", label: "Latency" }, { val: "-40%", label: "Verification" } ]
-        },
-        {
-            title: "Syntra — Dating Application",
-            status: "Deployed",
-            problem: "Modern matching platforms require complex, high-volume data schemas capable of rapid querying to deliver real-time user experiences without sacrificing scalability.",
-            solution: "Developed a scalable microservices backend using Node.js and MongoDB. Designed optimized indexing strategies to support high-volume geolocation queries and matching algorithms. Leveraged Strapi CMS for flexible content and admin management.",
-            stack: ["Node.js", "MongoDB", "Strapi CMS"],
-            image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCuDcsVwnBPSfCGlEnb-Y-qS23N77ozH3nhqXIewdD2LZlLA_BY65OdDDxZvExjDCBoI1R1acwe_BLOHRmHUVRExkGsbvqLqEaD-BNrhl4-w9pTcfam6v0B_gOOY84BolHiHvr3crXv7xQhEHhysBhtdJHCXwSiJFgvkCh3xPIo4xyPjkGiOL6z3pezYfVyYpp2wMgIhupQRLruBqfZI4fHFJUi07AbLiI0PnEWiMRGQyPMG9Dq8hDk",
-            stats: [ { val: "1,000+", label: "Active Users" } ],
-            reverse: true
-        }
-    ];
-
-    return (
-        <div className="flex flex-col w-full relative overflow-hidden pb-stack-lg min-h-screen pt-16">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-colors-surface-container-highest)_0%,_transparent_50%)] opacity-30 mix-blend-screen pointer-events-none"></div>
-            <section className="max-w-[1280px] w-full mx-auto px-margin-mobile lg:px-margin-desktop mt-stack-lg mb-stack-lg relative z-10">
-                <div className="flex flex-col gap-base mb-stack-lg">
-                    <span className="font-label-caps text-label-caps text-secondary uppercase tracking-widest">[ // PORTFOLIO_INDEX ]</span>
-                    <h1 className="font-display-lg text-display-lg text-on-surface tracking-tight">System<br/><span className="text-on-surface-variant">Architecture & Build</span></h1>
-                </div>
-                <div className="grid grid-cols-1 gap-stack-lg">
-                    {projects.map((proj, idx) => (
-                        <article key={idx} className={`group relative bg-surface-container-low rounded-xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1 duration-300`}>
-                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <div className="grid grid-cols-1 lg:grid-cols-2">
-                                <div className={`p-stack-lg flex flex-col justify-between h-full z-10 relative ${proj.reverse ? 'order-1 lg:order-2' : ''}`}>
-                                    <div>
-                                        <div className="flex items-center gap-stack-sm mb-stack-sm">
-                                            <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-                                            <span className="font-label-caps text-label-caps text-secondary uppercase">{proj.status}</span>
-                                        </div>
-                                        <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-md">{proj.title}</h2>
-                                        <div className="space-y-stack-md mb-stack-lg">
-                                            <div>
-                                                <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-base">Problem Space</h3>
-                                                <p className="font-body-md text-body-md text-on-surface/80">{proj.problem}</p>
-                                            </div>
-                                            <div>
-                                                <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-base">Architecture & Solution</h3>
-                                                <p className="font-body-md text-body-md text-on-surface/80">{proj.solution}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="font-label-caps text-label-caps text-on-surface-variant uppercase mb-stack-sm">Tech Stack</h3>
-                                        <div className="flex flex-wrap gap-stack-sm">
-                                            {proj.stack.map(s => <span key={s} className="px-2 py-1 bg-surface-container-highest text-on-surface-variant font-code-sm text-code-sm rounded">{s}</span>)}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={`relative min-h-[300px] lg:min-h-full bg-surface-container-highest z-10 overflow-hidden ${proj.reverse ? 'order-2 lg:order-1' : ''}`}>
-                                    <div className="absolute inset-0 bg-cover bg-center opacity-80 group-hover:scale-105 transition-transform duration-700 ease-out" style={{backgroundImage: `url('${proj.image}')`}}></div>
-                                    <div className={`absolute inset-0 bg-gradient-to-t from-surface-container-low lg:via-surface-container-low/50 to-transparent ${proj.reverse ? 'lg:bg-gradient-to-r' : 'lg:bg-gradient-to-l'}`}></div>
-                                    <div className={`absolute bottom-stack-md flex gap-stack-sm ${proj.reverse ? 'left-stack-md' : 'right-stack-md'}`}>
-                                        {proj.stats.map((s, i) => (
-                                            <div key={i} className="bg-surface/90 backdrop-blur-md px-3 py-2 rounded shadow-lg border border-outline-variant/30 flex flex-col items-end">
-                                                <span className="font-label-caps text-label-caps text-tertiary uppercase">{s.val}</span>
-                                                <span className="font-code-sm text-code-sm text-on-surface-variant">{s.label}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-            </section>
-        </div>
-    );
-};
-
-const ExperiencePage = () => (
-    <div className="flex flex-col w-full relative pt-16">
-        <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-tertiary-fixed/5 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] bg-secondary-fixed/5 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="max-w-[1280px] mx-auto w-full px-margin-mobile lg:px-margin-desktop py-stack-lg flex flex-col gap-margin-desktop z-10">
-            <div className="flex flex-col gap-stack-sm w-full max-w-3xl">
-                <h1 className="font-display-lg text-display-lg text-on-surface">Experience & Expertise</h1>
-                <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl">A chronological overview of professional roles, architectural achievements, and technical proficiencies.</p>
-            </div>
-            <div className="flex flex-col lg:flex-row gap-gutter">
-                <div className="flex-1 flex flex-col gap-margin-desktop">
-                    <section className="flex flex-col gap-stack-lg relative">
-                        <div className="absolute left-[20px] md:left-[30px] top-[40px] bottom-0 w-px bg-outline-variant/30 hidden sm:block"></div>
-                        <div className="flex items-center gap-stack-sm">
-                            <span className="material-symbols-outlined text-secondary text-[24px]">work_history</span>
-                            <h2 className="font-headline-md text-headline-md text-on-surface">Professional Experience</h2>
-                        </div>
-                        <div className="flex flex-col gap-stack-lg pl-0 sm:pl-stack-lg md:pl-[64px] relative">
-                            <div className="relative group">
-                                <div className="absolute left-[-45px] top-[8px] w-[12px] h-[12px] rounded-full bg-secondary shadow-[0_0_12px_rgba(93,230,255,0.6)] hidden sm:block group-hover:scale-125 transition-transform duration-300"></div>
-                                <div className="bg-surface-container rounded-xl p-stack-lg flex flex-col gap-stack-md transition-all duration-300 hover:bg-surface-container-high group-hover:shadow-lg group-hover:shadow-secondary/5">
-                                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-stack-sm">
-                                        <div className="flex flex-col gap-base">
-                                            <h3 className="font-headline-md text-[20px] leading-tight font-semibold text-on-surface">Software Developer (Full Stack)</h3>
-                                            <div className="flex items-center gap-2"><span className="font-label-caps text-label-caps text-secondary uppercase">Ideal IT Techno Pvt Ltd — Indore, MP</span></div>
-                                        </div>
-                                        <div className="bg-surface-container-highest px-3 py-1 rounded-full w-fit">
-                                            <span className="font-label-caps text-label-caps text-on-surface-variant">Apr 2025 — Present</span>
-                                        </div>
-                                    </div>
-                                    <p className="font-body-md text-body-md text-on-surface-variant">Leading the development of highly scalable backend architectures and dynamic front-end interfaces. Focused on performance optimization and microservices orchestration.</p>
-                                    <ul className="flex flex-col gap-3 font-body-md text-body-md text-on-surface-variant list-none pl-0">
-                                        <li className="flex items-start gap-3"><span className="material-symbols-outlined text-tertiary text-[20px] mt-1 shrink-0">check_circle</span><span>Architected scalable Node.js RESTful APIs and microservices, using Sequelize CLI and Prisma for migrations.</span></li>
-                                        <li className="flex items-start gap-3"><span className="material-symbols-outlined text-tertiary text-[20px] mt-1 shrink-0">check_circle</span><span>Built and maintained React.js/Next.js interfaces ensuring frontend stays in sync with backend contracts.</span></li>
-                                        <li className="flex items-start gap-3"><span className="material-symbols-outlined text-tertiary text-[20px] mt-1 shrink-0">check_circle</span><span>Engineered end-to-end workflow automations with n8n and Antigravity, reducing manual time by ~30%.</span></li>
-                                        <li className="flex items-start gap-3"><span className="material-symbols-outlined text-tertiary text-[20px] mt-1 shrink-0">check_circle</span><span>Strengthened security with Firebase/JWT and Redis caching to handle 500+ concurrent users securely.</span></li>
-                                        <li className="flex items-start gap-3"><span className="material-symbols-outlined text-tertiary text-[20px] mt-1 shrink-0">check_circle</span><span>Owned production deployments on AWS (EC2, S3, Lambda) end-to-end for both frontend and backend.</span></li>
-                                    </ul>
-                                    <div className="flex flex-wrap gap-2 mt-stack-sm">
-                                        {["Node.js", "React.js", "Next.js", "AWS", "Redis", "n8n", "Antigravity"].map(t => <span key={t} className="bg-primary-container px-3 py-1 rounded font-code-sm text-code-sm text-primary">{t}</span>)}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section className="flex flex-col gap-stack-md mt-stack-lg">
-                        <div className="flex items-center gap-stack-sm"><span className="material-symbols-outlined text-tertiary text-[24px]">school</span><h2 className="font-headline-md text-headline-md text-on-surface">Education</h2></div>
-                        <div className="bg-surface-container rounded-xl p-stack-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-stack-md hover:bg-surface-container-high transition-colors">
-                            <div className="flex flex-col gap-base"><h3 className="font-headline-md text-[20px] leading-tight font-semibold text-on-surface">Bachelor of Technology in Computer Science Engineering</h3><span className="font-body-md text-body-md text-on-surface-variant">Sushila Devi Bansal College, Indore (Sep 2020 – Jul 2024)</span></div>
-                            <div className="flex flex-col items-start sm:items-end gap-1"><span className="font-label-caps text-label-caps text-outline uppercase tracking-wider">Academic Performance</span><div className="flex items-baseline gap-2"><span className="font-display-lg-mobile text-display-lg-mobile text-tertiary">7.5</span><span className="font-body-md text-body-md text-on-surface-variant">CGPA</span></div></div>
-                        </div>
-                    </section>
-                </div>
-                <aside className="w-full lg:w-[400px] shrink-0 flex flex-col gap-stack-lg">
-                    <div className="flex items-center gap-stack-sm mb-[-16px]"><span className="material-symbols-outlined text-primary text-[24px]">code_blocks</span><h2 className="font-headline-md text-headline-md text-on-surface">Technical Skills</h2></div>
-                    {[
-                        { title: 'Core & Frontend', icon: 'web', skills: ['JavaScript (ES6+)', 'TypeScript', 'React.js', 'Next.js', 'Tailwind CSS', 'Bootstrap', 'HTML5/CSS3'] },
-                        { title: 'Backend & APIs', icon: 'dns', skills: ['Node.js', 'Express.js', 'Microservices', 'RESTful APIs', 'Java', 'Python', 'RAG'] },
-                        { title: 'Databases & Cloud', icon: 'cloud', skills: ['MongoDB', 'MySQL', 'Redis', 'Prisma', 'AWS (EC2/S3/Lambda)', 'Docker', 'Firebase'] },
-                        { title: 'Tools & Automation', icon: 'build', skills: ['n8n', 'Antigravity', 'Cursor', 'Git/GitHub', 'Strapi CMS', 'Postman'] }
-                    ].map((cat, idx) => (
-                        <div key={idx} className="bg-surface-container-low rounded-xl p-stack-md flex flex-col gap-stack-sm group">
-                            <div className="flex items-center gap-2 mb-2"><span className="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:text-primary transition-colors">{cat.icon}</span><h3 className="font-label-caps text-label-caps text-on-surface uppercase tracking-wider">{cat.title}</h3></div>
-                            <div className="flex flex-wrap gap-2">{cat.skills.map(s => <div key={s} className="bg-surface-container-highest px-3 py-1.5 rounded flex items-center gap-2"><span className="font-code-sm text-code-sm text-on-surface-variant">{s}</span></div>)}</div>
-                        </div>
-                    ))}
-                </aside>
-            </div>
-        </div>
-    </div>
-);
-
-const ContactPage = () => {
-    const [sent, setSent] = useState(false);
-    const [sending, setSending] = useState(false);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setSending(true);
-        setTimeout(() => {
-            setSending(false);
-            setSent(true);
-        }, 1500);
+function useScrollProgress() {
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      const progress = Math.min(
+        window.scrollY / Math.max(window.innerHeight, 1),
+        1,
+      );
+      document.documentElement.style.setProperty(
+        "--scroll-progress",
+        progress.toString(),
+      );
+      frame = 0;
     };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+}
 
-    return (
-        <div className="flex flex-col w-full min-h-screen pt-16">
-            <div className="relative w-full overflow-hidden bg-background py-stack-lg lg:py-margin-desktop flex-1 flex items-center">
-                <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
-                    <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                        <defs>
-                            <pattern height="10" id="network" patternUnits="userSpaceOnUse" width="10" x="0" y="0">
-                                <circle className="text-tertiary-fixed" cx="2" cy="2" fill="currentColor" r="0.5"></circle>
-                                <path className="text-on-surface-variant" d="M 2 2 L 10 10" stroke="currentColor" strokeWidth="0.1"></path>
-                            </pattern>
-                        </defs>
-                        <rect fill="url(#network)" height="100" width="100" x="0" y="0"></rect>
-                    </svg>
-                </div>
-                <div className="max-w-[1280px] mx-auto px-margin-mobile lg:px-margin-desktop relative z-10 w-full flex flex-col lg:flex-row gap-stack-lg lg:gap-margin-desktop">
-                    <div className="flex-1 flex flex-col gap-stack-lg">
-                        <div className="flex flex-col gap-stack-sm">
-                            <span className="font-label-caps text-label-caps text-secondary uppercase tracking-widest">[04] Connect</span>
-                            <h1 className="font-display-lg text-display-lg text-on-surface tracking-tight">Let's build something <br/><span className="text-tertiary">extraordinary.</span></h1>
-                            <p className="font-body-md text-body-md text-on-surface-variant max-w-md mt-stack-md">Open for opportunities, architectural consultations, and full-stack development projects.</p>
-                        </div>
-                        <div className="flex flex-col gap-stack-md mt-stack-md">
-                            {[
-                                { label: 'Email', icon: 'mail', val: 'mahajanpankaj615@gmail.com', href: 'mailto:mahajanpankaj615@gmail.com' },
-                                { label: 'Phone', icon: 'call', val: '+91-6263545855', href: 'tel:+916263545855' },
-                                { label: 'LinkedIn', icon: 'link', val: 'pankaj-mahajan', href: 'https://linkedin.com/in/pankaj-mahajan' }
-                            ].map(item => (
-                                <div key={item.label} className="flex items-center gap-gutter p-stack-md bg-surface-container-low rounded-xl shadow-md border border-outline-variant/20 hover:border-secondary transition-colors group">
-                                    <div className="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-highest group-hover:bg-primary/20 transition-colors">
-                                        <span className="material-symbols-outlined text-secondary text-[24px]">{item.icon}</span>
-                                    </div>
-                                    <div className="flex flex-col gap-base">
-                                        <span className="font-label-caps text-label-caps text-on-surface-variant uppercase">{item.label}</span>
-                                        <a className="font-headline-md text-headline-md text-on-surface hover:text-tertiary transition-colors" href={item.href} target={item.label === 'LinkedIn' ? '_blank' : '_self'} rel="noreferrer">{item.val}</a>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex-1 w-full max-w-lg lg:ml-auto">
-                        <div className="bg-surface-container rounded-2xl shadow-xl p-stack-lg border border-outline-variant/30 relative overflow-hidden backdrop-blur-md">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                            {!sent ? (
-                                <form className="relative z-10 flex flex-col gap-stack-md" onSubmit={handleSubmit}>
-                                    <div className="flex flex-col gap-stack-sm">
-                                        <label className="font-label-caps text-label-caps text-on-surface uppercase" htmlFor="name">Name</label>
-                                        <div className="relative">
-                                            <span className="material-symbols-outlined absolute left-stack-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">person</span>
-                                            <input required className="w-full bg-surface-container-highest border border-outline-variant/40 rounded-lg py-3 pl-10 pr-4 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all" placeholder="John Doe"/>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-stack-sm">
-                                        <label className="font-label-caps text-label-caps text-on-surface uppercase" htmlFor="email">Email</label>
-                                        <div className="relative">
-                                            <span className="material-symbols-outlined absolute left-stack-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">mail</span>
-                                            <input required type="email" className="w-full bg-surface-container-highest border border-outline-variant/40 rounded-lg py-3 pl-10 pr-4 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all" placeholder="john@example.com"/>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-stack-sm">
-                                        <label className="font-label-caps text-label-caps text-on-surface uppercase" htmlFor="message">Message</label>
-                                        <div className="relative">
-                                            <span className="material-symbols-outlined absolute left-stack-sm top-3 text-on-surface-variant text-[18px]">chat</span>
-                                            <textarea required rows={4} className="w-full bg-surface-container-highest border border-outline-variant/40 rounded-lg py-3 pl-10 pr-4 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all resize-none" placeholder="How can I help you?"/>
-                                        </div>
-                                    </div>
-                                    <button disabled={sending} className="mt-stack-sm w-full bg-secondary text-on-secondary font-label-caps text-label-caps uppercase tracking-wider py-4 rounded-lg flex items-center justify-center gap-base hover:bg-secondary-fixed transition-colors shadow-lg hover:shadow-secondary/20 group">
-                                        {sending ? (
-                                            <><span className='material-symbols-outlined text-[18px] animate-spin'>sync</span><span>Sending...</span></>
-                                        ) : (
-                                            <><span>Send Message</span><span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span></>
-                                        )}
-                                    </button>
-                                </form>
-                            ) : (
-                                <div className='flex flex-col items-center justify-center py-stack-lg text-center gap-stack-sm'>
-                                    <span className='material-symbols-outlined text-tertiary text-[48px]'>check_circle</span>
-                                    <h3 className='font-headline-md text-headline-md text-on-surface'>Message Sent</h3>
-                                    <p className='font-body-md text-body-md text-on-surface-variant'>I will get back to you shortly.</p>
-                                    <button onClick={() => setSent(false)} className="mt-4 text-secondary font-label-caps text-xs uppercase underline">Send another</button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
+function magneticMove(event: MouseEvent<HTMLElement>) {
+  const element = event.currentTarget;
+  const rect = element.getBoundingClientRect();
+  const x = (event.clientX - rect.left - rect.width / 2) * 0.12;
+  const y = (event.clientY - rect.top - rect.height / 2) * 0.12;
+  element.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+function magneticReset(event: MouseEvent<HTMLElement>) {
+  event.currentTarget.style.transform = "translate(0, 0)";
+}
+
+function Topbar() {
+  const [activeSection, setActiveSection] = useState("approach");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = navItems
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible) setActiveSection((visible.target as HTMLElement).id);
+      },
+      {
+        threshold: [0.15, 0.3, 0.5, 0.7],
+        rootMargin: "-25% 0px -55% 0px",
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+  const isActive = (id: string) => activeSection === id;
+
+  return (
+    <header
+      className={`topbar-shell fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
+        scrolled ? "topbar-scrolled" : ""
+      }`}
+    >
+      <div className="topbar-inner mx-auto flex h-[4.8rem] max-w-[1500px] items-center gap-4 px-[var(--page-pad)]">
+        {/* Brand */}
+        <a
+          href="#top"
+          className="topbar-brand group flex min-w-0 items-center gap-3"
+          onClick={closeMenu}
+          data-testid="link-home"
+        >
+          <span className="topbar-brand-mark relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-foreground/10 bg-card/75 text-[.68rem] font-bold tracking-[.18em] text-foreground shadow-[0_10px_30px_rgba(18,37,43,.06)] backdrop-blur-xl transition-all duration-500 group-hover:-translate-y-1 group-hover:border-primary/40 group-hover:shadow-[0_14px_35px_rgba(18,37,43,.12)]">
+            PM
+            <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary shadow-[0_0_0_4px_hsl(var(--primary)/.12)]" />
+          </span>
+
+          <span className="hidden min-w-0 flex-col leading-none sm:flex">
+            <span className="display truncate text-[1.08rem] font-semibold tracking-[-0.045em] text-foreground lg:text-[1.18rem]">
+              Pankaj Mahajan
+            </span>
+            <span className="mono mt-1 text-[.52rem] uppercase tracking-[.16em] text-muted-foreground">
+              full stack developer
+            </span>
+          </span>
+        </a>
+
+        {/* Desktop navigation */}
+        <div className="hidden flex-1 justify-center md:flex">
+          <nav
+            className="topbar-nav rounded-full border border-foreground/10 bg-card/60 p-1.5 shadow-[0_12px_40px_rgba(18,37,43,.06)] backdrop-blur-2xl"
+            aria-label="Primary navigation"
+          >
+            {navItems.map((item) => {
+              const active = isActive(item.id);
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={closeMenu}
+                  aria-current={active ? "page" : undefined}
+                  className={`topbar-nav-link group relative inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[.78rem] font-medium tracking-[-.01em] transition-all duration-300 lg:px-5 ${
+                    active
+                      ? "topbar-nav-link-active text-background"
+                      : "text-muted-foreground hover:bg-background/75 hover:text-foreground"
+                  }`}
+                  data-testid={`link-nav-${item.label.toLowerCase().replaceAll(" ", "-")}`}
+                >
+                  {active && (
+                    <span className="absolute inset-0 -z-0 rounded-full bg-foreground shadow-[0_8px_22px_rgba(18,37,43,.14)]" />
+                  )}
+                  <span className="relative z-10 h-1.5 w-1.5 rounded-full bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <span className="relative z-10">{item.label}</span>
+                </a>
+              );
+            })}
+          </nav>
         </div>
-    );
-};
 
-const App = () => {
-    return (
-        <BrowserRouter>
-            <Header />
-            <main className="bg-background min-h-screen">
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/projects" element={<ProjectsPage />} />
-                    <Route path="/experience" element={<ExperiencePage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                </Routes>
-            </main>
-            <Footer />
-        </BrowserRouter>
-    );
-};
+        {/* Desktop actions */}
+        <div className="ml-auto hidden items-center gap-2 md:flex">
+          <a
+            href="#contact"
+            className="topbar-talk inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[.78rem] font-medium text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-card/70 hover:text-foreground"
+            data-testid="link-email-top"
+          >
+            <Mail size={14} />
+            Let&apos;s talk
+          </a>
+          <a
+            href="/Pankaj_Mahajan_Resume.docx"
+            download
+            className="topbar-resume group inline-flex items-center gap-2 rounded-full border border-foreground bg-foreground px-4 py-2.5 text-[.78rem] font-semibold text-background shadow-[0_12px_30px_rgba(18,37,43,.14)] transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-background"
+            data-testid="link-resume-nav"
+          >
+            Resume
+            <Download
+              className="transition-transform duration-300 group-hover:translate-y-0.5"
+              size={14}
+              strokeWidth={2.2}
+            />
+          </a>
+        </div>
+
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          className="topbar-menu-button ml-auto flex h-11 w-11 items-center justify-center rounded-full border border-foreground/10 bg-card/80 text-foreground shadow-[0_12px_30px_rgba(18,37,43,.07)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary md:hidden"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
+          data-testid="button-menu"
+        >
+          <span className="relative flex h-5 w-5 items-center justify-center">
+            <Menu
+              className={`absolute transition-all duration-300 ${menuOpen ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`}
+              size={19}
+            />
+            <X
+              className={`absolute transition-all duration-300 ${menuOpen ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
+              size={19}
+            />
+          </span>
+        </button>
+      </div>
+
+      {/* Mobile navigation */}
+      <div
+        id="mobile-navigation"
+        className={`topbar-mobile-panel mx-auto max-w-[1500px] overflow-hidden transition-all duration-500 md:hidden ${
+          menuOpen
+            ? "pointer-events-auto max-h-[32rem] translate-y-0 opacity-100"
+            : "pointer-events-none max-h-0 -translate-y-3 opacity-0"
+        }`}
+      >
+        <div className="px-[var(--page-pad)] pb-5 pt-2">
+          <div className="rounded-[1.75rem] border border-foreground/10 bg-card/95 p-2 shadow-[0_24px_60px_rgba(18,37,43,.12)] backdrop-blur-2xl">
+            <nav className="grid gap-1" aria-label="Mobile navigation">
+              {navItems.map((item, index) => {
+                const active = isActive(item.id);
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={closeMenu}
+                    aria-current={active ? "page" : undefined}
+                    className={`mobile-nav-item group flex items-center justify-between rounded-2xl px-4 py-3.5 transition-all duration-300 ${
+                      active
+                        ? "bg-foreground text-background shadow-[0_10px_25px_rgba(18,37,43,.12)]"
+                        : "text-muted-foreground hover:bg-background hover:text-foreground"
+                    }`}
+                    style={{
+                      transitionDelay: menuOpen ? `${index * 35}ms` : "0ms",
+                    }}
+                    data-testid={`link-mobile-nav-${item.label.toLowerCase().replaceAll(" ", "-")}`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <span
+                        className={`mono text-[.6rem] ${active ? "text-primary" : "text-muted-foreground"}`}
+                      >
+                        0{index + 1}
+                      </span>
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </span>
+                    <ArrowUpRight
+                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      size={16}
+                    />
+                  </a>
+                );
+              })}
+            </nav>
+
+            <div className="mt-2 grid grid-cols-2 gap-2 border-t border-border/60 p-2 pt-3">
+              <a
+                href="#contact"
+                onClick={closeMenu}
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground transition-all hover:bg-background hover:text-foreground"
+                data-testid="link-mobile-talk"
+              >
+                <Mail size={14} />
+                Let&apos;s talk
+              </a>
+              <a
+                href="/Pankaj_Mahajan_Resume.docx"
+                download
+                onClick={closeMenu}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-foreground px-3 py-3 text-sm font-semibold text-background transition-all hover:bg-primary"
+                data-testid="link-mobile-resume"
+              >
+                Resume <Download size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section
+      id="top"
+      data-cursor-theme="hero"
+      className="hero-shell relative overflow-hidden border-b border-foreground/15 px-[var(--page-pad)] pb-24 pt-32 md:min-h-[900px] md:pb-28 md:pt-44"
+    >
+        <GhostCursor
+          color="#B497CF"
+          brightness={2}
+          edgeIntensity={0}
+          trailLength={50}
+          inertia={0.5}
+          grainIntensity={0.05}
+          bloomStrength={0.1}
+          bloomRadius={1}
+          bloomThreshold={0.025}
+          fadeDelayMs={1000}
+          fadeDurationMs={1500}
+          mixBlendMode="normal"
+        />
+      <div className="hero-grid" aria-hidden="true" />
+      <div className="hero-glow hero-glow-left" aria-hidden="true" />
+      <div className="hero-glow hero-glow-right" aria-hidden="true" />
+      <div className="relative mx-auto max-w-[1080px] lg:min-h-[700px] flex flex-col items-center text-center">
+        <div className="relative z-10 pb-10 lg:pb-16 flex flex-col items-center">
+          <div className="reveal mono mb-8 inline-flex items-center justify-center gap-3 rounded-full border border-border/75 bg-background/70 px-4 py-2 text-[.66rem] text-primary shadow-[0_10px_30px_rgba(18,37,43,0.04)] backdrop-blur-sm">
+            <span className="h-2 w-2 rounded-full bg-secondary" />
+            Indore, Madhya Pradesh / available for select builds
+          </div>
+          <h1 className="display reveal reveal-delay-1 max-w-5xl text-[clamp(3.65rem,10vw,9.25rem)] font-semibold leading-[.86] text-foreground">
+            Full-stack
+            <br />
+            <span className="text-primary">developer.</span>
+            <br />
+            Built to scale.
+          </h1>
+          <div className="hero-copy reveal reveal-delay-2 mt-9 flex max-w-2xl flex-col items-center gap-6">
+            <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              Performance-driven Full Stack Developer with over 1 year of
+              experience building scalable RESTful APIs, microservices, and
+              modern frontends using Node.js, Express.js, and Next.js. Focused
+              on secure authentication, Redis performance, AWS deployments, and
+              AI-assisted workflows.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="#work"
+                className="magnetic inline-flex items-center gap-3 bg-foreground px-5 py-4 text-sm font-bold text-background shadow-[0_18px_40px_rgba(18,37,43,0.12)] transition-transform hover:-translate-y-0.5"
+                onMouseMove={magneticMove}
+                onMouseLeave={magneticReset}
+                data-testid="link-hero-work"
+              >
+                See the work <ArrowDownRight size={17} />
+              </a>
+              <a
+                href="/Pankaj_Mahajan_Resume.docx"
+                download
+                className="magnetic inline-flex items-center gap-3 border border-border bg-background/75 px-5 py-4 text-sm font-bold text-foreground backdrop-blur-sm transition-transform hover:-translate-y-0.5"
+                onMouseMove={magneticMove}
+                onMouseLeave={magneticReset}
+                data-testid="link-hero-resume"
+              >
+                Download résumé <Download size={17} />
+              </a>
+            </div>
+          </div>
+          <div className="hero-metrics reveal reveal-delay-3 mt-10 grid gap-4 border-t border-border/70 pt-6 sm:grid-cols-3 text-left">
+            <div>
+              <p className="mono mb-2 text-[.58rem] text-primary">
+                01 / Experience
+              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                1+ year shipping production software across backend and frontend
+                layers.
+              </p>
+            </div>
+            <div>
+              <p className="mono mb-2 text-[.58rem] text-primary">
+                02 / Strength
+              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                RESTful APIs, microservices, authentication, caching, and cloud
+                deployment.
+              </p>
+            </div>
+            <div>
+              <p className="mono mb-2 text-[.58rem] text-primary">03 / Focus</p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                AI-assisted development, workflow automation, and reliable
+                product delivery.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute bottom-7 left-[var(--page-pad)] right-[var(--page-pad)] flex items-center justify-between gap-4 text-muted-foreground">
+        <span className="mono text-[.62rem]">
+          available for select freelance and product work
+        </span>
+        <span className="h-px flex-1 bg-border/70" />
+        <span className="mono text-[.62rem]">01 / 07</span>
+      </div>
+    </section>
+  );
+}
+
+function Approach() {
+  return (
+    <section
+      id="approach"
+      data-cursor-theme="approach"
+      className="section-pad mx-auto grid max-w-[1440px] gap-16 md:grid-cols-[.72fr_1.28fr] md:gap-24"
+    >
+      <div className="reveal">
+        <p className="mono mb-5 text-[.66rem] text-primary">02 / Approach</p>
+        <h2 className="display max-w-md text-5xl font-semibold leading-[.95] sm:text-7xl">
+          Build the system.
+        </h2>
+      </div>
+      <div className="grid gap-12 sm:grid-cols-2">
+        <div className="reveal reveal-delay-1">
+          <p className="system-line display mb-5 text-3xl font-semibold">
+            Start from the backend.
+          </p>
+          <p className="leading-relaxed text-muted-foreground">
+            Scalable APIs, microservices, Firebase and JWT authentication, and
+            Redis caching are handled early so the product stays fast later.
+          </p>
+        </div>
+        <div className="reveal reveal-delay-2">
+          <p className="system-line display mb-5 text-3xl font-semibold">
+            End with the workflow.
+          </p>
+          <p className="leading-relaxed text-muted-foreground">
+            n8n automations, AWS deployments, and AI-assisted development reduce
+            manual work and keep delivery steady.
+          </p>
+        </div>
+        <div className="reveal reveal-delay-3 border-t border-border pt-8 sm:col-span-2">
+          <p className="display max-w-3xl text-3xl leading-tight text-secondary sm:text-5xl">
+            “I like the hard middle: where product ideas become reliable enough
+            to earn trust.”
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Work() {
+  return (
+    <section
+      id="work"
+      data-cursor-theme="work"
+      className="bg-foreground px-[var(--page-pad)] py-[clamp(5.5rem,12vw,10rem)] text-background"
+    >
+      <div className="mx-auto max-w-[1440px]">
+        <div className="reveal mb-16 flex items-end justify-between gap-6">
+          <div>
+            <p className="mono mb-5 text-[.66rem] text-accent">
+              03 / Selected work
+            </p>
+            <h2 className="display text-5xl font-semibold leading-none sm:text-8xl">
+              Built for
+              <br />
+              <span className="text-primary">real load.</span>
+            </h2>
+          </div>
+          <span className="mono hidden text-[.62rem] text-background/50 sm:block">
+            two systems / one standard
+          </span>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
+          <a
+            href="https://visualible.com"
+            target="_blank"
+            rel="noreferrer"
+            className="reveal reveal-delay-1 group relative flex min-h-[510px] flex-col justify-between overflow-hidden border border-background/20 bg-secondary p-7 text-background sm:p-10"
+            data-testid="link-project-visualible"
+          >
+            <div className="absolute right-8 top-8 flex h-16 w-16 items-center justify-center rounded-full border border-background/35 text-accent transition-transform duration-300 group-hover:rotate-45">
+              <ArrowUpRight size={22} />
+            </div>
+            <div>
+              <p className="mono mb-5 text-[.65rem] text-background/65">
+                01 / AI product platform
+              </p>
+              <h3 className="project-name display">Visualible</h3>
+              <p className="project-type">AI eBook platform · visualible.com</p>
+            </div>
+            <div className="flex flex-col gap-5 border-t border-background/25 pt-6 sm:flex-row sm:items-end sm:justify-between">
+              <p className="max-w-md leading-relaxed text-background/75">
+                Built microservices for an AI-driven eBook platform that
+                extracts citations, maps them to Wikipedia sources, and powers a
+                RAG pipeline for context-aware Q&A.
+              </p>
+              <span className="mono shrink-0 text-[.62rem] text-accent">
+                RAG / Redis / Next.js
+              </span>
+            </div>
+          </a>
+          <a
+            href="https://syntra.co.in"
+            target="_blank"
+            rel="noreferrer"
+            className="project-card reveal reveal-delay-2 group flex min-h-[510px] flex-col justify-between border border-background/20 bg-background p-7 text-foreground sm:p-10"
+            data-testid="link-project-syntra"
+          >
+            <div className="flex items-start justify-between">
+              <p className="mono text-[.65rem] text-primary">
+                02 / Consumer application
+              </p>
+              <ExternalLink className="project-arrow text-primary" size={20} />
+            </div>
+            <div>
+              <h3 className="project-name display">Syntra</h3>
+              <p className="project-type">Dating application · syntra.co.in</p>
+              <p className="mt-7 max-w-md leading-relaxed text-muted-foreground">
+                Core backend infrastructure for matching algorithms, profile
+                management, high-volume MongoDB schemas, and Strapi-powered
+                subscription content.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 border-t border-border pt-6">
+              {["Node.js", "MongoDB", "Strapi CMS"].map((tag) => (
+                <span
+                  key={tag}
+                  className="mono border border-border px-3 py-2 text-[.58rem] text-muted-foreground"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SystemManifesto() {
+  return (
+    <section
+      data-cursor-theme="manifesto"
+      className="section-pad mx-auto grid max-w-[1440px] gap-14 md:grid-cols-[.4fr_1.6fr]"
+    >
+      <div className="reveal">
+        <p className="mono text-[.66rem] text-primary">04 / In the system</p>
+      </div>
+      <div className="reveal reveal-delay-1">
+        <p className="display max-w-5xl text-[clamp(2.8rem,6.5vw,7.4rem)] font-semibold leading-[.9]">
+          From <span className="text-secondary">API contracts</span> to the last
+          button, every layer should tell the same story.
+        </p>
+        <div className="mt-14 grid gap-8 border-t border-border pt-8 sm:grid-cols-3">
+          <div>
+            <p className="mono mb-3 text-[.62rem] text-primary">01 / Model</p>
+            <p className="text-muted-foreground">Make the data honest.</p>
+          </div>
+          <div>
+            <p className="mono mb-3 text-[.62rem] text-primary">02 / Scale</p>
+            <p className="text-muted-foreground">
+              Cache what repeats. Queue what waits.
+            </p>
+          </div>
+          <div>
+            <p className="mono mb-3 text-[.62rem] text-primary">03 / Ship</p>
+            <p className="text-muted-foreground">
+              Deploy with enough visibility to sleep.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Experience() {
+  return (
+    <section
+      id="experience"
+      data-cursor-theme="experience"
+      className="border-t border-border bg-muted/45 px-[var(--page-pad)] py-[clamp(5.5rem,12vw,10rem)]"
+    >
+      <div className="mx-auto max-w-[1440px]">
+        <div className="reveal mb-14 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+          <div>
+            <p className="mono mb-5 text-[.66rem] text-primary">
+              05 / Experience
+            </p>
+            <h2 className="display text-5xl font-semibold leading-none sm:text-8xl">
+              A short
+              <br />
+              timeline.
+            </h2>
+          </div>
+          <a
+            href="/Pankaj_Mahajan_Resume.docx"
+            download
+            className="magnetic inline-flex w-fit items-center gap-3 border-b border-primary pb-2 text-sm font-bold"
+            onMouseMove={magneticMove}
+            onMouseLeave={magneticReset}
+            data-testid="link-resume-download"
+          >
+            <Download size={17} /> Download résumé
+          </a>
+        </div>
+        <div className="border-t border-border">
+          <article className="reveal grid gap-6 border-b border-border py-8 md:grid-cols-[.25fr_1fr_.6fr] md:gap-12">
+            <p className="mono text-[.62rem] text-primary">Apr 2025 — now</p>
+            <div>
+              <h3 className="display text-3xl font-semibold">
+                Software Developer
+              </h3>
+              <p className="mt-1 text-muted-foreground">Ideal IT Techno</p>
+            </div>
+            <ul className="list-disc space-y-3 pl-5 leading-relaxed text-muted-foreground">
+              <li>
+                Architected and maintained scalable Node.js RESTful APIs and
+                microservices powering core product features.
+              </li>
+              <li>
+                Engineered workflow automations with n8n and Antigravity to
+                reduce manual intervention and improve integration reliability.
+              </li>
+              <li>
+                Strengthened backend security and performance with Firebase/JWT
+                authentication and Redis caching.
+              </li>
+              <li>
+                Owned production deployments on AWS and partnered on AI-driven
+                data extraction pipelines and unit testing.
+              </li>
+            </ul>
+          </article>
+          <article className="reveal reveal-delay-1 grid gap-6 border-b border-border py-8 md:grid-cols-[.25fr_1fr_.6fr] md:gap-12">
+            <p className="mono text-[.62rem] text-primary">Sep — Dec 2024</p>
+            <div>
+              <h3 className="display text-3xl font-semibold">
+                Data Science Trainee
+              </h3>
+              <p className="mt-1 text-muted-foreground">
+                Grow Tech · Dr. Reddy's Foundation
+              </p>
+            </div>
+            <p className="leading-relaxed text-muted-foreground">
+              Applied Python-based statistical analysis and machine learning
+              fundamentals to improve data-informed decisions.
+            </p>
+          </article>
+          <article className="reveal reveal-delay-2 grid gap-6 border-b border-border py-8 md:grid-cols-[.25fr_1fr_.6fr] md:gap-12">
+            <p className="mono text-[.62rem] text-primary">2020 — 2024</p>
+            <div>
+              <h3 className="display text-3xl font-semibold">
+                B.Tech, Computer Science
+              </h3>
+              <p className="mt-1 text-muted-foreground">
+                Sushila Devi Bansal College · Indore
+              </p>
+            </div>
+            <p className="leading-relaxed text-muted-foreground">
+              Graduated with a 7.5 CGPA. The foundation underneath the shipping
+              instinct.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Toolkit() {
+  return (
+    <section
+      data-cursor-theme="toolkit"
+      className="section-pad mx-auto grid max-w-[1440px] gap-12 md:grid-cols-[.7fr_1.3fr]"
+    >
+      <div className="reveal">
+        <p className="mono mb-5 text-[.66rem] text-primary">06 / Toolkit</p>
+        <h2 className="display text-5xl font-semibold leading-[.92] sm:text-7xl">
+          The right tool for the real constraint.
+        </h2>
+      </div>
+      <div className="reveal reveal-delay-1 flex flex-wrap content-start gap-3">
+        {skills.map((skill) => (
+          <span
+            className="skill-pill text-sm text-foreground"
+            key={skill}
+            data-testid={`skill-${skill.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}`}
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section
+      id="contact"
+      data-cursor-theme="contact"
+      className="bg-primary px-[var(--page-pad)] py-[clamp(5.5rem,12vw,10rem)] text-primary-foreground"
+    >
+      <div className="mx-auto max-w-[1440px]">
+        <div className="reveal flex flex-col justify-between gap-10 md:flex-row md:items-end">
+          <div>
+            <p className="mono mb-6 text-[.66rem] text-primary-foreground/70">
+              07 / Make something sturdy
+            </p>
+            <h2 className="display max-w-4xl text-[clamp(4rem,10vw,10rem)] font-semibold leading-[.83]">
+              Let's make
+              <br />
+              <span className="text-accent">the hard part</span>
+              <br />
+              simple.
+            </h2>
+          </div>
+          <div className="max-w-xs md:pb-2">
+            <p className="mb-7 text-lg leading-relaxed text-primary-foreground/80">
+              Have a product with a lot going on underneath? That is usually
+              where the good work starts.
+            </p>
+            <a
+              href="mailto:mahajanpankaj615@gmail.com"
+              className="magnetic inline-flex items-center gap-3 bg-foreground px-5 py-4 text-sm font-bold text-background"
+              onMouseMove={magneticMove}
+              onMouseLeave={magneticReset}
+              data-testid="button-contact-email"
+            >
+              Email Pankaj <Mail size={17} />
+            </a>
+          </div>
+        </div>
+        <div className="mt-24 flex flex-col justify-between gap-5 border-t border-primary-foreground/25 pt-6 text-sm text-primary-foreground/75 sm:flex-row">
+          <p>mahajanpankaj615@gmail.com · +91 6263545855</p>
+          <div className="flex items-center gap-6">
+            <a
+              href="https://www.linkedin.com/in/pankaj-mahajan-26a369223"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 font-semibold text-primary-foreground transition-colors hover:text-accent"
+              data-testid="link-linkedin"
+            >
+              <Linkedin size={16} /> LinkedIn
+            </a>
+            <a
+              href="#top"
+              className="inline-flex items-center gap-2 font-semibold text-primary-foreground transition-colors hover:text-accent"
+              data-testid="link-back-top"
+            >
+              Back to top <ArrowUpRight size={16} />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Home() {
+  useReveal();
+  useScrollProgress();
+  return (
+    <main className="portfolio-page">
+      <Topbar />
+      <Hero />
+      <Approach />
+      <Work />
+      <SystemManifesto />
+      <Experience />
+      <Toolkit />
+      <Contact />
+    </main>
+  );
+}
+
+function Router() {
+  return (
+    <RoutedErrorBoundary>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route component={NotFound} />
+      </Switch>
+    </RoutedErrorBoundary>
+  );
+}
+
+function RoutedErrorBoundary({ children }: { children: ReactNode }) {
+  const [location] = useLocation();
+  return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>;
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <Router />
+        </WouterRouter>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
