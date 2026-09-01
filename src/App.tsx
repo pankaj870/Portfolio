@@ -21,7 +21,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
-import GhostCursor from "@/components/GhostCursor";
+import RippleDistortion from "@/components/RippleDistortion";
+
+import CurvedLoop from "@/components/CurvedLoop";
 
 const queryClient = new QueryClient();
 
@@ -366,20 +368,27 @@ function Hero() {
       data-cursor-theme="hero"
       className="hero-shell relative overflow-hidden border-b border-foreground/15 px-[var(--page-pad)] pb-24 pt-32 md:min-h-[900px] md:pb-28 md:pt-44"
     >
-        <GhostCursor
-          color="#B497CF"
-          brightness={2}
-          edgeIntensity={0}
-          trailLength={50}
-          inertia={0.5}
-          grainIntensity={0.05}
-          bloomStrength={0.1}
-          bloomRadius={1}
-          bloomThreshold={0.025}
-          fadeDelayMs={1000}
-          fadeDurationMs={1500}
-          mixBlendMode="normal"
+      <div className="absolute inset-0 z-0 pointer-events-none sm:pointer-events-auto">
+        <RippleDistortion
+          brushSize={150}
+          strength={0.2}
+          swirl={1}
+          rings={4}
+          grayscale
+          spread={5}
+          fade={3}
+          spacing={15}
+          dispersion={0}
+          glint={0}
+          tint="#a855f7"
+          tintAmount={0.1}
+          highlightColor="#ffffff"
+          trigger="hover"
+          clickStrength={2}
+          quality="low"
+          enabled
         />
+      </div>
       <div className="hero-grid" aria-hidden="true" />
       <div className="hero-glow hero-glow-left" aria-hidden="true" />
       <div className="hero-glow hero-glow-right" aria-hidden="true" />
@@ -732,27 +741,28 @@ function Experience() {
 }
 
 function Toolkit() {
+  const marqueeString = skills.join(" ✦ ") + " ✦ ";
+  
   return (
     <section
       data-cursor-theme="toolkit"
-      className="section-pad mx-auto grid max-w-[1440px] gap-12 md:grid-cols-[.7fr_1.3fr]"
+      className="section-pad overflow-hidden"
     >
-      <div className="reveal">
-        <p className="mono mb-5 text-[.66rem] text-primary">06 / Toolkit</p>
-        <h2 className="display text-5xl font-semibold leading-[.92] sm:text-7xl">
-          The right tool for the real constraint.
-        </h2>
+      <div className="mx-auto max-w-[1440px] px-[var(--page-pad)] mb-12 lg:mb-24">
+        <div className="reveal">
+          <p className="mono mb-5 text-[.66rem] text-primary">06 / Toolkit</p>
+          <h2 className="display text-5xl font-semibold leading-[.92] sm:text-7xl">
+            The right tool for the real constraint.
+          </h2>
+        </div>
       </div>
-      <div className="reveal reveal-delay-1 flex flex-wrap content-start gap-3">
-        {skills.map((skill) => (
-          <span
-            className="skill-pill text-sm text-foreground"
-            key={skill}
-            data-testid={`skill-${skill.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-")}`}
-          >
-            {skill}
-          </span>
-        ))}
+      <div className="reveal reveal-delay-1 w-full">
+        <CurvedLoop 
+          marqueeText={marqueeString} 
+          speed={1.5} 
+          curveAmount={350} 
+          interactive={true} 
+        />
       </div>
     </section>
   );
