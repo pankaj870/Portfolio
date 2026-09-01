@@ -198,10 +198,10 @@ function Topbar() {
           </span>
 
           <span className="hidden min-w-0 flex-col leading-none sm:flex">
-            <span className="display truncate text-[1.08rem] font-semibold tracking-[-0.045em] text-foreground lg:text-[1.18rem]">
+            <span className={`display truncate text-[1.08rem] font-semibold tracking-[-0.045em] lg:text-[1.18rem] transition-colors duration-500 ${scrolled ? 'text-foreground' : 'text-white'}`}>
               Pankaj Mahajan
             </span>
-            <span className="mono mt-1 text-[.52rem] uppercase tracking-[.16em] text-muted-foreground">
+            <span className={`mono mt-1 text-[.52rem] uppercase tracking-[.16em] transition-colors duration-500 ${scrolled ? 'text-muted-foreground' : 'text-white/70'}`}>
               full stack developer
             </span>
           </span>
@@ -243,7 +243,7 @@ function Topbar() {
         <div className="ml-auto hidden items-center gap-2 md:flex">
           <a
             href="#contact"
-            className="topbar-talk inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[.78rem] font-medium text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-card/70 hover:text-foreground"
+            className={`topbar-talk inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[.78rem] font-medium transition-all duration-300 hover:-translate-y-0.5 hover:bg-card/70 ${scrolled ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white'}`}
             data-testid="link-email-top"
           >
             <Mail size={14} />
@@ -252,7 +252,7 @@ function Topbar() {
           <a
             href="/Pankaj_Mahajan_Resume.docx"
             download
-            className="topbar-resume group inline-flex items-center gap-2 rounded-full border border-foreground bg-foreground px-4 py-2.5 text-[.78rem] font-semibold text-background shadow-[0_12px_30px_rgba(18,37,43,.14)] transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:bg-primary hover:text-background"
+            className="topbar-resume group inline-flex items-center gap-2 rounded-full border border-primary bg-primary px-4 py-2.5 text-[.78rem] font-semibold text-primary-foreground shadow-[0_12px_30px_rgba(18,37,43,.14)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-105"
             data-testid="link-resume-nav"
           >
             Resume
@@ -398,15 +398,15 @@ function Hero() {
             <span className="h-2 w-2 rounded-full bg-secondary" />
             Indore, Madhya Pradesh / available for select builds
           </div>
-          <h1 className="display reveal reveal-delay-1 max-w-5xl text-[clamp(3.65rem,10vw,9.25rem)] font-semibold leading-[.86] text-foreground">
+          <h1 className="display reveal reveal-delay-1 max-w-5xl text-[clamp(3.65rem,10vw,9.25rem)] font-semibold leading-[.86] text-white">
             Full-stack
             <br />
-            <span className="text-primary">developer.</span>
+            <span className="text-accent">developer.</span>
             <br />
             Built to scale.
           </h1>
           <div className="hero-copy reveal reveal-delay-2 mt-9 flex max-w-2xl flex-col items-center gap-6">
-            <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+            <p className="max-w-3xl text-lg leading-relaxed text-white/80 sm:text-xl">
               Performance-driven Full Stack Developer with over 1 year of
               experience building scalable RESTful APIs, microservices, and
               modern frontends using Node.js, Express.js, and Next.js. Focused
@@ -416,7 +416,7 @@ function Hero() {
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="#work"
-                className="magnetic inline-flex items-center gap-3 bg-foreground px-5 py-4 text-sm font-bold text-background shadow-[0_18px_40px_rgba(18,37,43,0.12)] transition-transform hover:-translate-y-0.5"
+                className="magnetic inline-flex items-center gap-3 bg-white px-5 py-4 text-sm font-bold text-foreground shadow-[0_18px_40px_rgba(18,37,43,0.12)] transition-transform hover:-translate-y-0.5"
                 onMouseMove={magneticMove}
                 onMouseLeave={magneticReset}
                 data-testid="link-hero-work"
@@ -435,28 +435,28 @@ function Hero() {
               </a>
             </div>
           </div>
-          <div className="hero-metrics reveal reveal-delay-3 mt-10 grid gap-4 border-t border-border/70 pt-6 sm:grid-cols-3 text-left">
+          <div className="hero-metrics reveal reveal-delay-3 mt-10 grid gap-4 border-t border-white/20 pt-6 sm:grid-cols-3 text-left">
             <div>
-              <p className="mono mb-2 text-[.58rem] text-primary">
+              <p className="mono mb-2 text-[.58rem] text-accent">
                 01 / Experience
               </p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-sm leading-relaxed text-white/80">
                 1+ year shipping production software across backend and frontend
                 layers.
               </p>
             </div>
             <div>
-              <p className="mono mb-2 text-[.58rem] text-primary">
+              <p className="mono mb-2 text-[.58rem] text-accent">
                 02 / Strength
               </p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-sm leading-relaxed text-white/80">
                 RESTful APIs, microservices, authentication, caching, and cloud
                 deployment.
               </p>
             </div>
             <div>
-              <p className="mono mb-2 text-[.58rem] text-primary">03 / Focus</p>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="mono mb-2 text-[.58rem] text-accent">03 / Focus</p>
+              <p className="text-sm leading-relaxed text-white/80">
                 AI-assisted development, workflow automation, and reliable
                 product delivery.
               </p>
@@ -464,11 +464,11 @@ function Hero() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-7 left-[var(--page-pad)] right-[var(--page-pad)] flex items-center justify-between gap-4 text-muted-foreground">
+      <div className="absolute bottom-7 left-[var(--page-pad)] right-[var(--page-pad)] flex items-center justify-between gap-4 text-white/70">
         <span className="mono text-[.62rem]">
           available for select freelance and product work
         </span>
-        <span className="h-px flex-1 bg-border/70" />
+        <span className="h-px flex-1 bg-white/20" />
         <span className="mono text-[.62rem]">01 / 07</span>
       </div>
     </section>
