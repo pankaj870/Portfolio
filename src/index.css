@@ -154,18 +154,7 @@ html {
 
 
 .hero-shell {
-  background:
-    radial-gradient(
-      circle at top left,
-      hsl(var(--accent) / 0.16),
-      transparent 20%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      hsl(var(--primary) / 0.12),
-      transparent 30%
-    ),
-    hsl(var(--background));
+  background: hsl(var(--background));
 }
 .hero-grid {
   position: absolute;
@@ -184,32 +173,7 @@ html {
   width: 1px;
   background: hsl(var(--primary) / 0.45);
 }
-.hero-glow {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(70px);
-  pointer-events: none;
-  opacity: 0.34;
-  will-change: transform;
-}
-.hero-glow-left {
-  left: 8%;
-  top: 12%;
-  width: 18rem;
-  height: 18rem;
-  background: hsl(var(--primary) / 0.22);
-  transform: translateY(calc(var(--scroll-progress, 0) * 24px));
-  transition: transform 0.15s linear;
-}
-.hero-glow-right {
-  right: 10%;
-  bottom: 6%;
-  width: 19rem;
-  height: 19rem;
-  background: hsl(var(--accent) / 0.18);
-  transform: translateY(calc(var(--scroll-progress, 0) * -18px));
-  transition: transform 0.15s linear;
-}
+
 .hero-highlight {
   position: relative;
   display: inline-block;

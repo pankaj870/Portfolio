@@ -23,7 +23,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import { Route, Switch, useLocation, Router as WouterRouter } from "wouter";
-import GhostCursor from "@/components/GhostCursor";
+import Strands from "@/components/Strands";
 
 const queryClient = new QueryClient();
 
@@ -402,23 +402,29 @@ function Hero() {
       data-cursor-theme="hero"
       className="hero-shell relative overflow-hidden border-b border-foreground/15 px-[var(--page-pad)] pb-24 pt-32 md:min-h-[900px] md:pb-28 md:pt-44"
     >
-        <GhostCursor
-          color="#B497CF"
-          brightness={2}
-          edgeIntensity={0}
-          trailLength={50}
-          inertia={0.5}
-          grainIntensity={0.05}
-          bloomStrength={0.1}
-          bloomRadius={1}
-          bloomThreshold={0.025}
-          fadeDelayMs={1000}
-          fadeDurationMs={1500}
-          mixBlendMode="normal"
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <Strands 
+          colors={["#F97316","#7C3AED","#06B6D4"]}
+          count={3}
+          speed={0.5}
+          amplitude={1}
+          waviness={1}
+          thickness={0.7}
+          glow={2.6}
+          taper={3}
+          spread={1}
+          intensity={0.6}
+          saturation={2}
+          opacity={1}
+          scale={1.5}
+          glass={false}
+          refraction={1}
+          dispersion={1}
+          glassSize={1}
+          hueShift={0}
         />
+      </div>
       <div className="hero-grid" aria-hidden="true" />
-      <div className="hero-glow hero-glow-left" aria-hidden="true" />
-      <div className="hero-glow hero-glow-right" aria-hidden="true" />
       <div className="relative mx-auto max-w-[1080px] lg:min-h-[700px] flex flex-col items-center text-center">
         <div className="relative z-10 pb-10 lg:pb-16 flex flex-col items-center">
           <div className="reveal mono mb-8 inline-flex items-center justify-center gap-3 rounded-full border border-border/75 bg-background/70 px-4 py-2 text-[.66rem] text-primary shadow-[0_10px_30px_rgba(18,37,43,0.04)] backdrop-blur-sm">
