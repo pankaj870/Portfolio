@@ -15,6 +15,8 @@ import {
   Mail,
   Menu,
   X,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Toaster } from "@/components/ui/toaster";
@@ -133,6 +135,24 @@ function Topbar() {
   const [activeSection, setActiveSection] = useState("approach");
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark") || 
+             window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -239,6 +259,13 @@ function Topbar() {
 
         {/* Desktop actions */}
         <div className="ml-auto hidden items-center gap-2 md:flex">
+          <button
+            onClick={toggleTheme}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-foreground/10 bg-card/60 text-muted-foreground transition-all duration-300 hover:border-primary/40 hover:text-foreground hover:bg-card/90"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           <a
             href="#contact"
             className="topbar-talk inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[.78rem] font-medium text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-card/70 hover:text-foreground"
@@ -262,10 +289,18 @@ function Topbar() {
           </a>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          type="button"
-          className="topbar-menu-button ml-auto flex h-11 w-11 items-center justify-center rounded-full border border-foreground/10 bg-card/80 text-foreground shadow-[0_12px_30px_rgba(18,37,43,.07)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary md:hidden"
+        {/* Mobile menu button & Theme toggle */}
+        <div className="ml-auto flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleTheme}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-foreground/10 bg-card/80 text-foreground shadow-[0_12px_30px_rgba(18,37,43,.07)] backdrop-blur-xl transition-all duration-300 hover:border-primary/40 hover:text-primary"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? <Sun size={19} /> : <Moon size={19} />}
+          </button>
+          <button
+            type="button"
+            className="topbar-menu-button flex h-11 w-11 items-center justify-center rounded-full border border-foreground/10 bg-card/80 text-foreground shadow-[0_12px_30px_rgba(18,37,43,.07)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
           onClick={() => setMenuOpen((open) => !open)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
@@ -284,13 +319,14 @@ function Topbar() {
           </span>
         </button>
       </div>
+      </div>
 
       {/* Mobile navigation */}
       <div
         id="mobile-navigation"
         className={`topbar-mobile-panel mx-auto max-w-[1500px] overflow-hidden transition-all duration-500 md:hidden ${
           menuOpen
-            ? "pointer-events-auto max-h-[32rem] translate-y-0 opacity-100"
+            ? "pointer-events-auto max-h-[40rem] translate-y-0 opacity-100"
             : "pointer-events-none max-h-0 -translate-y-3 opacity-0"
         }`}
       >
@@ -389,10 +425,10 @@ function Hero() {
             <span className="h-2 w-2 rounded-full bg-secondary" />
             Indore, Madhya Pradesh / available for select builds
           </div>
-          <h1 className="display reveal reveal-delay-1 max-w-5xl text-[clamp(3.65rem,10vw,9.25rem)] font-semibold leading-[.86] text-foreground">
+          <h1 className="display reveal reveal-delay-1 max-w-5xl text-[clamp(2.75rem,12vw,9.25rem)] font-bold tracking-tight leading-[.86] text-foreground">
             Full-stack
             <br />
-            <span className="text-primary">developer.</span>
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">developer.</span>
             <br />
             Built to scale.
           </h1>
@@ -407,7 +443,7 @@ function Hero() {
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="#work"
-                className="magnetic inline-flex items-center gap-3 bg-foreground px-5 py-4 text-sm font-bold text-background shadow-[0_18px_40px_rgba(18,37,43,0.12)] transition-transform hover:-translate-y-0.5"
+                className="magnetic inline-flex items-center gap-3 rounded-full bg-foreground px-7 py-4 text-sm font-bold text-background shadow-[0_18px_40px_rgba(18,37,43,0.12)] transition-all hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(18,37,43,0.18)]"
                 onMouseMove={magneticMove}
                 onMouseLeave={magneticReset}
                 data-testid="link-hero-work"
@@ -417,7 +453,7 @@ function Hero() {
               <a
                 href="/Pankaj_Mahajan_Resume.docx"
                 download
-                className="magnetic inline-flex items-center gap-3 border border-border bg-background/75 px-5 py-4 text-sm font-bold text-foreground backdrop-blur-sm transition-transform hover:-translate-y-0.5"
+                className="magnetic inline-flex items-center gap-3 rounded-full border border-border bg-background/75 px-7 py-4 text-sm font-bold text-foreground backdrop-blur-sm transition-all hover:-translate-y-1 hover:bg-background"
                 onMouseMove={magneticMove}
                 onMouseLeave={magneticReset}
                 data-testid="link-hero-resume"
@@ -514,7 +550,7 @@ function Work() {
     <section
       id="work"
       data-cursor-theme="work"
-      className="bg-foreground px-[var(--page-pad)] py-[clamp(5.5rem,12vw,10rem)] text-background"
+      className="bg-foreground px-[var(--page-pad)] py-[clamp(4rem,10vw,10rem)] text-background"
     >
       <div className="mx-auto max-w-[1440px]">
         <div className="reveal mb-16 flex items-end justify-between gap-6">
@@ -537,7 +573,7 @@ function Work() {
             href="https://visualible.com"
             target="_blank"
             rel="noreferrer"
-            className="reveal reveal-delay-1 group relative flex min-h-[510px] flex-col justify-between overflow-hidden border border-background/20 bg-secondary p-7 text-background sm:p-10"
+            className="reveal reveal-delay-1 group relative flex min-h-[510px] flex-col justify-between overflow-hidden rounded-3xl border border-background/20 bg-secondary p-7 text-background transition-all hover:shadow-2xl sm:p-10"
             data-testid="link-project-visualible"
           >
             <div className="absolute right-8 top-8 flex h-16 w-16 items-center justify-center rounded-full border border-background/35 text-accent transition-transform duration-300 group-hover:rotate-45">
@@ -565,7 +601,7 @@ function Work() {
             href="https://syntra.co.in"
             target="_blank"
             rel="noreferrer"
-            className="project-card reveal reveal-delay-2 group flex min-h-[510px] flex-col justify-between border border-background/20 bg-background p-7 text-foreground sm:p-10"
+            className="project-card reveal reveal-delay-2 group flex min-h-[510px] flex-col justify-between rounded-3xl border border-background/20 bg-background p-7 text-foreground transition-all hover:shadow-2xl sm:p-10"
             data-testid="link-project-syntra"
           >
             <div className="flex items-start justify-between">
@@ -610,7 +646,7 @@ function SystemManifesto() {
         <p className="mono text-[.66rem] text-primary">04 / In the system</p>
       </div>
       <div className="reveal reveal-delay-1">
-        <p className="display max-w-5xl text-[clamp(2.8rem,6.5vw,7.4rem)] font-semibold leading-[.9]">
+        <p className="display max-w-5xl text-[clamp(2.2rem,8vw,7.4rem)] font-semibold leading-[.9] tracking-tight">
           From <span className="text-secondary">API contracts</span> to the last
           button, every layer should tell the same story.
         </p>
@@ -642,7 +678,7 @@ function Experience() {
     <section
       id="experience"
       data-cursor-theme="experience"
-      className="border-t border-border bg-muted/45 px-[var(--page-pad)] py-[clamp(5.5rem,12vw,10rem)]"
+      className="border-t border-border bg-muted/45 px-[var(--page-pad)] py-[clamp(4rem,10vw,10rem)]"
     >
       <div className="mx-auto max-w-[1440px]">
         <div className="reveal mb-14 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
@@ -763,7 +799,7 @@ function Contact() {
     <section
       id="contact"
       data-cursor-theme="contact"
-      className="bg-primary px-[var(--page-pad)] py-[clamp(5.5rem,12vw,10rem)] text-primary-foreground"
+      className="bg-primary px-[var(--page-pad)] py-[clamp(4rem,10vw,10rem)] text-primary-foreground"
     >
       <div className="mx-auto max-w-[1440px]">
         <div className="reveal flex flex-col justify-between gap-10 md:flex-row md:items-end">
@@ -771,7 +807,7 @@ function Contact() {
             <p className="mono mb-6 text-[.66rem] text-primary-foreground/70">
               07 / Make something sturdy
             </p>
-            <h2 className="display max-w-4xl text-[clamp(4rem,10vw,10rem)] font-semibold leading-[.83]">
+            <h2 className="display max-w-4xl text-[clamp(2.5rem,12vw,10rem)] font-semibold leading-[.83]">
               Let's make
               <br />
               <span className="text-accent">the hard part</span>
@@ -786,7 +822,7 @@ function Contact() {
             </p>
             <a
               href="mailto:mahajanpankaj615@gmail.com"
-              className="magnetic inline-flex items-center gap-3 bg-foreground px-5 py-4 text-sm font-bold text-background"
+              className="magnetic inline-flex items-center gap-3 rounded-full bg-foreground px-7 py-4 text-sm font-bold text-background transition-transform hover:-translate-y-1"
               onMouseMove={magneticMove}
               onMouseLeave={magneticReset}
               data-testid="button-contact-email"

@@ -126,7 +126,7 @@ html {
   letter-spacing: -0.055em;
 }
 .section-pad {
-  padding: clamp(5.5rem, 12vw, 11rem) var(--page-pad);
+  padding: clamp(3.5rem, 10vw, 11rem) var(--page-pad);
 }
 
 .reveal {
